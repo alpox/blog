@@ -4,9 +4,10 @@
   "description": "A private blogging system.",
   "main": "index.js",
   "scripts": {
-    "watch": "elm-css Stylesheets.elm -o build/ && concurrently --kill-others \"npm run watch-app\" \"npm run watch-css\"",
+    "watch": "npm run build-css && concurrently --kill-others \"npm run watch-app\" \"npm run watch-css\"",
     "watch-app": "cp index.html build && elm-live --output=./build/app.js --dir=./build ./src/Main.elm --open --pushstate",
-    "watch-css": "chokidar 'src/**/Style.elm' -c 'elm-css Stylesheets.elm -o build/'",
+    "watch-css": "chokidar 'src/**/Style.elm' -c 'npm run build-css'",
+    "build-css": "elm-css Stylesheets.elm -o build/",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
