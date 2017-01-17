@@ -8,7 +8,7 @@ import Style
 { id, class, classList } =
     Html.CssHelpers.withNamespace "bbs"
 
-
+main : Program Never Model Msg
 main =
     Html.beginnerProgram { model = model, view = view, update = update }
 
