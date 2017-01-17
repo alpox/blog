@@ -1,12 +1,14 @@
 module Style exposing (..)
 
 import Css exposing (..)
-import Css.Elements exposing (html, body, li)
+import Css.Elements exposing (html, body, h1, li)
 import Css.Namespace exposing (namespace)
 
 
 type CssClasses
-    = Container
+    = PageHost
+    | Container
+    | ProfilePicture
 
 
 type CssIds
@@ -18,11 +20,28 @@ css =
         [ each [ html, body ]
             [ margin (px 0)
             , padding (px 0)
+            , minHeight (pct 100)
+            , height (pct 100)
+            ]
+        , h1
+            [ textAlign center ]
+        , (.) PageHost
+            [ height (pct 100)
             ]
         , (.) Container
             [ width (pct 80)
+            , height (pct 100)
             , margin auto
-            , backgroundColor (rgb 220 220 220)
+            , padding2 (px 20) (px 10)
+            , backgroundColor (rgba 220 220 220 0.5)
+            ]
+        , (.) ProfilePicture
+            [ width (px 300)
+            , height (px 300)
+            , backgroundImage (url "img/profile.png")
+            , backgroundSize cover
+            , margin auto
+            , borderRadius (pct 100)
             ]
         ]
 
