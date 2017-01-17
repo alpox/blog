@@ -2,7 +2,6 @@
   "name": "bbs",
   "version": "1.0.0",
   "description": "A private blogging system.",
-  "main": "index.js",
   "scripts": {
     "watch": "npm run build && concurrently --kill-others \"npm run watch-app\" \"npm run watch-css\"",
     "watch-app": "elm-live --output=./build/app.js --dir=./build ./src/Main.elm --open --pushstate",
