@@ -4,7 +4,9 @@
   "description": "A private blogging system.",
   "main": "index.js",
   "scripts": {
-    "run": "elm-live src/Main.elm --open --pushstate",
+    "watch": "concurrently --kill-others \"npm run watch-app\" \"npm run watch-css\"",
+    "watch-app": "cp index.html build && elm-live --output=./build/app.js --dir=./build ./src/Main.elm --open --pushstate",
+    "watch-css": "chokidar 'src/**/Style.elm' -c 'elm-css Stylesheets.elm -o build/'",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
@@ -25,6 +27,8 @@
   },
   "homepage": "https://gitlab.com/alpoxo/bbs#README",
   "devDependencies": {
+    "chokidar-cli": "^1.2.0",
+    "concurrently": "^3.1.0",
     "elm-live": "^2.7.4"
   }
 }
