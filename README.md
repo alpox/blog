@@ -1,3 +1,4 @@
-#BBS (Bernhaut Blog System)
+# BBS (Bernhaut Blog System)
+
 
 A private blogging system.
