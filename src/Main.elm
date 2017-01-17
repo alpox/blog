@@ -8,7 +8,7 @@ import Style
 
 
 { id, class, classList } =
-    Html.CssHelpers.withNamespace "dreamwriter"
+    Html.CssHelpers.withNamespace "bbs"
 
 main =
     Html.beginnerProgram { model = model, view = view, update = update }
@@ -51,7 +51,7 @@ update msg model =
 
 view : Model -> Html Msg
 view model =
-    div [ class [ Style.NavBar ]]
+    div [ class [ Style.Container ] ]
         [ button [ onClick Decrement ] [ text "-" ]
         , div [] [ text (toString model) ]
         , button [ onClick Increment ] [ text "+" ]

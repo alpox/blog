@@ -1,12 +1,12 @@
 module Style exposing (..)
 
 import Css exposing (..)
-import Css.Elements exposing (body, li)
+import Css.Elements exposing (html, body, li)
 import Css.Namespace exposing (namespace)
 
 
 type CssClasses
-    = NavBar
+    = Container
 
 
 type CssIds
@@ -14,30 +14,15 @@ type CssIds
 
 
 css =
-    (stylesheet << namespace "dreamwriter")
-        [ body
-            [ overflowX auto
-            , minWidth (px 1280)
+    (stylesheet << namespace "bbs")
+        [ each [ html, body ]
+            [ margin (px 0)
+            , padding (px 0)
             ]
-        , (#) Page
-            [ backgroundColor (rgb 200 128 64)
-            , color (hex "CCFFFF")
-            , width (pct 100)
-            , height (pct 100)
-            , boxSizing borderBox
-            , padding (px 8)
-            , margin zero
-            ]
-        , (.) NavBar
-            [ backgroundColor (rgb 200 200 200)
-            , margin zero
-            , padding zero
-            , children
-                [ li
-                    [ (display inlineBlock) |> important
-                    , color primaryAccentColor
-                    ]
-                ]
+        , (.) Container
+            [ width (pct 80)
+            , margin auto
+            , backgroundColor (rgb 220 220 220)
             ]
         ]
 
