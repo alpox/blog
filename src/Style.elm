@@ -15,30 +15,31 @@ type CssIds
 
 css =
     (stylesheet << namespace "dreamwriter")
-    [ body
-        [ overflowX auto
-        , minWidth (px 1280)
-        ]
-    , (#) Page
-        [ backgroundColor (rgb 200 128 64)
-        , color (hex "CCFFFF")
-        , width (pct 100)
-        , height (pct 100)
-        , boxSizing borderBox
-        , padding (px 8)
-        , margin zero
-        ]
-    , (.) NavBar
-        [ margin zero
-        , padding zero
-        , children
-            [ li
-                [ (display inlineBlock) |> important
-                , color primaryAccentColor
+        [ body
+            [ overflowX auto
+            , minWidth (px 1280)
+            ]
+        , (#) Page
+            [ backgroundColor (rgb 200 128 64)
+            , color (hex "CCFFFF")
+            , width (pct 100)
+            , height (pct 100)
+            , boxSizing borderBox
+            , padding (px 8)
+            , margin zero
+            ]
+        , (.) NavBar
+            [ backgroundColor (rgb 200 200 200)
+            , margin zero
+            , padding zero
+            , children
+                [ li
+                    [ (display inlineBlock) |> important
+                    , color primaryAccentColor
+                    ]
                 ]
             ]
         ]
-    ]
 
 
 primaryAccentColor =

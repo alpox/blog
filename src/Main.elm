@@ -3,11 +3,15 @@ module Main exposing (..)
 import Html exposing (Html, button, div, text)
 import Html.Events exposing (onClick)
 
+import Html.CssHelpers
+import Style
 
-main : Program Never Model Msg
+
+{ id, class, classList } =
+    Html.CssHelpers.withNamespace "dreamwriter"
+
 main =
     Html.beginnerProgram { model = model, view = view, update = update }
-
 
 
 -- MODEL
@@ -47,8 +51,8 @@ update msg model =
 
 view : Model -> Html Msg
 view model =
-    div []
+    div [ class [ Style.NavBar ]]
         [ button [ onClick Decrement ] [ text "-" ]
         , div [] [ text (toString model) ]
-        , button [ onClick Increment ] [ text "++" ]
+        , button [ onClick Increment ] [ text "+" ]
         ]
