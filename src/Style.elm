@@ -4,17 +4,12 @@ import Css exposing (..)
 import Css.Elements exposing (html, body, h1, li)
 import Css.Namespace exposing (namespace)
 
-
 type CssClasses
     = PageHost
     | Container
     | ProfilePicture
 
-
-type CssIds
-    = Page
-
-
+css : Stylesheet
 css =
     (stylesheet << namespace "bbs")
         [ each [ html, body ]
@@ -44,7 +39,3 @@ css =
             , borderRadius (pct 100)
             ]
         ]
-
-
-primaryAccentColor =
-    hex "ccffaa"
