@@ -6,7 +6,7 @@
     "watch": "npm run build && concurrently --kill-others --prefix \"[{name}]\" --names \"App,CSS\" \"npm run watch-app\" \"npm run watch-css\"",
     "watch-app": "elm-live --output=./build/app.js --dir=./build ./src/Main.elm --open --pushstate",
     "watch-css": "chokidar 'src/**/Style.elm' -c 'npm run build-css'",
-    "build": "mkdir build -p && npm run clean && npm run build-app && npm run build-css",
+    "build": "mkdir -p build && npm run clean && npm run build-app && npm run build-css",
     "build-prod": "npm run build && uglifyjs2 --compress --mangle --output=build/app.js -- build/app.js",
     "build-app": "npm run build-copy && elm-make src/Main.elm --output build/app.js",
     "build-css": "elm-css Stylesheets.elm -o build/",

@@ -45,6 +45,15 @@ css =
             , height (px footerSize)
             , boxSizing borderBox
             , backgroundColor (rgb 245 245 245)
+            , descendants 
+                [ (.) SocialLinks
+                    [ position relative
+                    , top (pct 50)
+                    , textAlign center
+                    , transform (translateY (pct -50))
+                    , children [ a [ display block ] ]
+                    ]
+                ]
             ]
         , (.) Post
             []
@@ -57,6 +66,7 @@ css =
             , minHeight (pct 100)
             , margin auto
             , padding2 (px 20) (px 32)
+            , boxShadow4 (px 0) (px 0) (px 8) (rgb 100 100 100)
             , paddingBottom (px (footerSize + 32))
               -- Make space for absolute positioned footer
             , backgroundColor (rgba 220 220 220 0.5)
@@ -98,14 +108,5 @@ css =
                     , paddingBottom (px 16)
                     ]
                 ]
-            ]
-        , (.) SocialLinks
-            [ position relative
-            , margin auto
-            , width (px 0)
-              -- Cheat for making the div not expand
-            , top (pct 50)
-            , transform (translateY (pct -50))
-            , children [ a [ display block ] ]
             ]
         ]
