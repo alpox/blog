@@ -10,7 +10,7 @@
     "build-prod": "npm run build && uglifyjs2 --compress --mangle --output=build/app.js -- build/app.js",
     "build-app": "npm run build-copy && elm-make src/Main.elm --output build/app.js",
     "build-css": "elm-css Stylesheets.elm -o build/",
-    "build-copy": "cp index.html build && if [ -e src/assets/* ]; then cp -r src/assets/* build; fi",
+    "build-copy": "cp index.html build && cp -r src/assets/* build",
     "clean": "rm -r -f build/*",
     "test": "echo \"Error: no test specified\" && exit 1"
   },

@@ -17,7 +17,8 @@ type CssClasses
 
 
 footerSize : Float
-footerSize = 100
+footerSize =
+    100
 
 
 css : Stylesheet
@@ -45,7 +46,7 @@ css =
             , height (px footerSize)
             , boxSizing borderBox
             , backgroundColor (rgb 245 245 245)
-            , descendants 
+            , descendants
                 [ (.) SocialLinks
                     [ position relative
                     , top (pct 50)
@@ -56,7 +57,13 @@ css =
                 ]
             ]
         , (.) Post
-            []
+            [ descendants
+                [ h1
+                    [ textAlign left
+                    , fontSize (em 2)
+                    ]
+                ]
+            ]
         , (.) PageHost
             [ height (pct 100)
             ]
