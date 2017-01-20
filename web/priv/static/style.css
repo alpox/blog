@@ -1,0 +1,97 @@
+html, body {
+    margin: 0px;
+    padding: 0px;
+    min-height: 100%;
+    height: 100%;
+}
+
+h1 {
+    text-align: center;
+}
+
+h1, h2, h3, h4 {
+    color: rgb(40, 40, 40);
+    font-family: Droid Sans, sans-serif;
+}
+
+footer {
+    position: absolute;
+    bottom: 0px;
+    left: 0px;
+    box-shadow: inset 0px 10px 10px -10px #222;
+    width: 100%;
+    height: 100px;
+    box-sizing: border-box;
+    background-color: rgb(245, 245, 245);
+}
+
+footer  .bbsSocialLinks {
+    position: relative;
+    top: 50%;
+    text-align: center;
+    transform: translateY(-50%);
+}
+
+footer  .bbsSocialLinks > a {
+    display: block;
+}
+
+.bbsPageHost {
+    height: 100%;
+}
+
+.bbsContainer {
+    position: relative;
+    width: 80%;
+    min-height: 100%;
+    margin: auto;
+    padding: 20px 32px;
+    box-shadow: 0px 0px 8px rgb(100, 100, 100);
+    padding-bottom: 132px;
+    background-color: rgba(220, 220, 220, 0.5);
+}
+
+.bbsContainer  a {
+    text-decoration: none;
+    color: initial;
+}
+
+.bbsProfilePicture {
+    width: 300px;
+    height: 300px;
+    background-image: url(img/profile.png);
+    background-size: cover;
+    margin: auto;
+    border-radius: 100%;
+}
+
+.bbsArticlePost  h1 {
+    text-align: left;
+    font-size: 2em;
+}
+
+.bbsDashboardPostAbstractContainer {
+    margin: auto;
+    margin-top: 50px;
+    padding: 4px 20px;
+    width: 100%;
+    box-sizing: border-box;
+    box-shadow: 1px 1px 4px;
+    border-radius: 4px;
+    overflow: hidden;
+    background-color: #fff;
+    cursor: pointer;
+}
+
+.bbsDashboardPostAbstractContainer:hover {
+    box-shadow: 1px 1px 8px;
+}
+
+.bbsDashboardPostAbstractContainer > .bbsDashboardPostAbstractTitle {
+    border-bottom: 1px solid rgb(200, 200, 200);
+}
+
+.bbsDashboardPostAbstractContainer > .bbsDashboardPostAbstract {
+    padding-top: 16px;
+    padding-bottom: 16px;
+}

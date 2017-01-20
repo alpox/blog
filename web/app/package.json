@@ -1,0 +1,40 @@
+{
+  "name": "bbs",
+  "version": "1.0.0",
+  "description": "A private blogging system.",
+  "scripts": {
+    "watch": "npm run build && concurrently --kill-others --prefix \"[{name}]\" --names \"App,CSS\" \"npm run watch-app\" \"npm run watch-css\"",
+    "watch-app": "chokidar 'src/**/*.elm' -c 'npm run build'",
+    "watch-css": "chokidar 'src/**/Style.elm' -c 'npm run build-css'",
+    "build": "mkdir -p ../priv/static && npm run clean && npm run build-app && npm run build-css",
+    "build-prod": "npm run build && uglifyjs2 --compress --mangle --output=../priv/static/app.js -- ../priv/static/app.js",
+    "build-app": "npm run build-copy && elm-make src/Main.elm --output ../priv/static/app.js",
+    "build-css": "elm-css Stylesheets.elm -o ../priv/static/",
+    "build-copy": "cp index.html ../priv/static && cp -r src/assets/* ../priv/static",
+    "clean": "rm -r -f ../priv/static/*",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://gitlab.com/alpoxo/bbs.git"
+  },
+  "keywords": [
+    "blog",
+    "blogging",
+    "system",
+    "blog",
+    "system"
+  ],
+  "author": "Elias Bernhaut",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://gitlab.com/alpoxo/bbs/issues"
+  },
+  "homepage": "https://gitlab.com/alpoxo/bbs#README",
+  "devDependencies": {
+    "chokidar-cli": "^1.2.0",
+    "concurrently": "^3.1.0",
+    "elm-live": "^2.7.4",
+    "uglify-js2": "^2.1.11"
+  }
+}

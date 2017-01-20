@@ -1,0 +1,19 @@
+<!doctype html>
+<html>
+  <head>
+    <link href="https://fonts.googleapis.com/css?family=Droid+Sans" rel="stylesheet">
+    <link rel="stylesheet" href="<%= static_path(@conn, "/css/markdown.css") %>">
+    <link rel="stylesheet" href="<%= static_path(@conn, "/css/monokai.highlight.css") %>">
+    <link rel="stylesheet" href="<%= static_path(@conn, "/style.css") %>" />
+    <script src="<%= static_path(@conn, "/js/highlight.pack.js") %>"></script>
+  </head>
+
+  <body>
+    <div class="bbsPageHost">
+        <%= render @view_module, @view_template, assigns %>
+    </div>
+    <script src="<%= static_path(@conn, "/app.js") %>"></script>
+    <script>Elm.Main.embed(document.querySelector("div"));</script>
+    <script>window.onload = () => hljs.initHighlighting();</script>
+  </body>
+</html>
