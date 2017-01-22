@@ -9,4 +9,4 @@ update msg model =
             ( { model | post = Just newPost }, Cmd.none )
 
         Retrieve (Err error) ->
-            ( model, Cmd.none )
+            ( { model | post = Nothing }, Cmd.none )

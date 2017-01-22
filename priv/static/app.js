@@ -14825,7 +14825,13 @@ var _user$project$Article_State$update = F2(
 				_1: _elm_lang$core$Platform_Cmd$none
 			};
 		} else {
-			return {ctor: '_Tuple2', _0: model, _1: _elm_lang$core$Platform_Cmd$none};
+			return {
+				ctor: '_Tuple2',
+				_0: _elm_lang$core$Native_Utils.update(
+					model,
+					{post: _elm_lang$core$Maybe$Nothing}),
+				_1: _elm_lang$core$Platform_Cmd$none
+			};
 		}
 	});
 
@@ -15557,7 +15563,7 @@ var _user$project$Article_View$view = function (model) {
 				_1: {ctor: '[]'}
 			});
 	} else {
-		return _elm_lang$html$Html$text('Loading...');
+		return _elm_lang$html$Html$text('No article found');
 	}
 };
 

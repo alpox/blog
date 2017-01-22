@@ -24,4 +24,4 @@ view model =
                     , lazy (\c -> Util.Markdown.toHtml c) post.content
                     ]
                 ]
-        Nothing -> text "Loading..."
+        Nothing -> text "No article found"

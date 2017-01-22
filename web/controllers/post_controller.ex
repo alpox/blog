@@ -12,6 +12,10 @@ defmodule Web.PostController do
       |> where([p], p.id == ^id)
       |> Repo.one
 
-    json conn, post
+    if post == nil do
+      send_resp(conn, 404, "Not found")
+    else
+      json conn, post
+    end
   end
 end

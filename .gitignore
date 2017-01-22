@@ -8,4 +8,6 @@ elm-stuff
 
 .DS_Store
 
-static/
+static
+
+_build
