@@ -8,25 +8,13 @@ defmodule Web.Router do
     plug :put_secure_browser_headers
   end
 
-  pipeline :api do
-    plug :accepts, ["json"]
-  end
+  post "/graphql", Absinthe.Plug, schema: Web.Schema
 
-  scope "/api", Web do
-    pipe_through :api
-
-    get "/posts", PostController, :index
-    get "/posts/:id", PostController, :show
-  end
-
+  get "/graphiql", Absinthe.Plug.GraphiQL, schema: Web.Schema
+  
   scope "/", Web do
     pipe_through :browser
 
     get "/", PageController, :index
   end
-
-  # Other scopes may use custom stacks.
-  # scope "/api", Web do
-  #   pipe_through :api
-  # end
 end

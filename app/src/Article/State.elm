@@ -9,4 +9,4 @@ update msg model =
             ( { model | post = Just newPost }, Cmd.none )
 
         Retrieve (Err error) ->
-            ( { model | post = Nothing }, Cmd.none )
+            ( { model | post = Nothing, error = Just (Debug.log "Error: " error) }, Cmd.none )

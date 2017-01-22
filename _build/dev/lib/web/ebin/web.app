@@ -9,8 +9,9 @@
                         'Elixir.Web.PageView','Elixir.Web.Post',
                         'Elixir.Web.PostController','Elixir.Web.Repo',
                         'Elixir.Web.Router','Elixir.Web.Router.Helpers',
-                        'Elixir.Web.UserSocket','Elixir.Web.Web']},
+                        'Elixir.Web.Schema','Elixir.Web.UserSocket',
+                        'Elixir.Web.Web']},
               {mod,{'Elixir.Web',[]}},
               {applications,[kernel,stdlib,elixir,phoenix,phoenix_pubsub,
                              phoenix_html,cowboy,logger,gettext,phoenix_ecto,
-                             postgrex]}]}.
+                             postgrex,absinthe,absinthe_plug]}]}.

@@ -2,21 +2,30 @@ module Article.Rest exposing (..)
 
 import Article.Types exposing (..)
 import Json.Decode as Decode exposing (field)
-import Http
+import Json.Decode.Pipeline exposing (decode, required, optional, hardcoded)
+import Json.Encode as Encode
+
+import Util.Graphql exposing (..)
 
 fetch : PostId -> Cmd Msg
 fetch id =
-    Http.get ("/api/posts/" ++ id) postDecoder
-        |> Http.send Retrieve
-
-decodeId : Int -> Decode.Decoder PostId
-decodeId decodeInt =
-    toString decodeInt |> Decode.succeed
+    query """
+    query($id: ID!) {
+        post(id: $id) {
+            id
+            title
+            content
+            summary
+        }
+    }
+    """ 
+    |> withVariable ("id", Encode.string id)
+    |> send Retrieve postDecoder
 
 postDecoder : Decode.Decoder Post
 postDecoder =
-    Decode.map4 Post
-        (field "id" Decode.int |> Decode.andThen decodeId)
-        (field "title" Decode.string)
-        (field "content" Decode.string)
-        (field "summary" Decode.string)
+    Decode.at ["post"] <| (decode Post
+            |> optional "id" Decode.string "0"
+            |> required "title" Decode.string
+            |> required "content" Decode.string
+            |> optional "summary" Decode.string "")

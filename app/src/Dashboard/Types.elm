@@ -7,8 +7,13 @@ import Article.Types exposing (PostId, Post)
 type Msg = 
     Retrieve (Result Http.Error (List Post))
 
-type alias Model = { posts : List Post }
+type alias Model = 
+    { posts : List Post
+    , error: Maybe Http.Error 
+    }
 
 initialModel : Model
 initialModel =
-    { posts = [] }
+    { posts = []
+    , error = Nothing
+    }
