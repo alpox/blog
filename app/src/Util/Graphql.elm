@@ -39,4 +39,4 @@ send response decoder query =
     
 queryDecoder : Decode.Decoder a -> Decode.Decoder a
 queryDecoder decoder =
-    Decode.at ["data"] <| decoder
+    Decode.at ["data"] decoder

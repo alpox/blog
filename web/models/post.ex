@@ -7,6 +7,8 @@ defmodule Web.Post do
     field :content, :string
     field :summary, :string
 
+    belongs_to :user, Web.User
+
     timestamps()
   end
 end

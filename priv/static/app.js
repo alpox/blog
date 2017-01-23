@@ -15024,11 +15024,10 @@ var _user$project$Dashboard_Rest$postDecoder = A2(
 					_NoRedInk$elm_decode_pipeline$Json_Decode_Pipeline$required,
 					'title',
 					_elm_lang$core$Json_Decode$string,
-					A4(
-						_NoRedInk$elm_decode_pipeline$Json_Decode_Pipeline$optional,
+					A3(
+						_NoRedInk$elm_decode_pipeline$Json_Decode_Pipeline$required,
 						'id',
 						_elm_lang$core$Json_Decode$string,
-						'0',
 						_NoRedInk$elm_decode_pipeline$Json_Decode_Pipeline$decode(_user$project$Article_Types$Post)))))));
 var _user$project$Dashboard_Rest$fetch = A3(
 	_user$project$Util_Graphql$send,

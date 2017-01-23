@@ -23,7 +23,7 @@ fetch =
 postDecoder : Decode.Decoder (List Post)
 postDecoder =
     (decode Post
-        |> optional "id" Decode.string "0"
+        |> required "id" Decode.string
         |> required "title" Decode.string
         |> optional "content" Decode.string ""
         |> required "summary" Decode.string)

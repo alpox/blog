@@ -19,7 +19,7 @@ defmodule Web.Mixfile do
   def application do
     [mod: {Web, []},
      applications: [:phoenix, :phoenix_pubsub, :phoenix_html, :cowboy, :logger, :gettext,
-                    :phoenix_ecto, :postgrex, :absinthe, :absinthe_plug]]
+                    :phoenix_ecto, :postgrex, :absinthe, :absinthe_plug, :comeonin, :guardian]]
   end
 
   # Specifies which paths to compile per environment.
@@ -39,7 +39,9 @@ defmodule Web.Mixfile do
      {:gettext, "~> 0.11"},
      {:cowboy, "~> 1.0"},
      {:absinthe, "~> 1.2.0"},
-     {:absinthe_plug, "~> 1.1"}]
+     {:absinthe_plug, "~> 1.1"},
+     {:comeonin, "~> 3.0.0"},
+     {:guardian, "~> 0.14.0"}]
   end
 
   # Aliases are shortcuts or tasks specific to the current project.
