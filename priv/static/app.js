@@ -15044,11 +15044,15 @@ var _user$project$Shared_Types$Info = function (a) {
 	return {ctor: 'Info', _0: a};
 };
 
-var _user$project$Login_Types$initialModel = {username: '', password: ''};
-var _user$project$Login_Types$Model = F2(
+var _user$project$Login_Types$initialLoginCredentials = {username: '', password: ''};
+var _user$project$Login_Types$initialModel = {loginCredentials: _user$project$Login_Types$initialLoginCredentials};
+var _user$project$Login_Types$LoginCredentials = F2(
 	function (a, b) {
 		return {username: a, password: b};
 	});
+var _user$project$Login_Types$Model = function (a) {
+	return {loginCredentials: a};
+};
 var _user$project$Login_Types$PasswordChange = function (a) {
 	return {ctor: 'PasswordChange', _0: a};
 };
@@ -15081,6 +15085,10 @@ var _user$project$App_Types$Model = F6(
 	function (a, b, c, d, e, f) {
 		return {route: a, flashMessages: b, articleModel: c, dashboardModel: d, loginModel: e, context: f};
 	});
+var _user$project$App_Types$NoOp = {ctor: 'NoOp'};
+var _user$project$App_Types$SetContext = function (a) {
+	return {ctor: 'SetContext', _0: a};
+};
 var _user$project$App_Types$LoginMsg = function (a) {
 	return {ctor: 'LoginMsg', _0: a};
 };
@@ -15368,6 +15376,18 @@ var _user$project$Login_Rest$login = F2(
 					_user$project$Util_Graphql$query('\n    mutation($username: String!, $password: String!) {\n        login(username: $username, password: $password) {\n            token\n        }\n    }\n    '))));
 	});
 
+var _user$project$Login_State$updatePassword = F2(
+	function (password, cred) {
+		return _elm_lang$core$Native_Utils.update(
+			cred,
+			{password: password});
+	});
+var _user$project$Login_State$updateUsername = F2(
+	function (username, cred) {
+		return _elm_lang$core$Native_Utils.update(
+			cred,
+			{username: username});
+	});
 var _user$project$Login_State$update = F2(
 	function (msg, model) {
 		var _p0 = msg;
@@ -15377,7 +15397,9 @@ var _user$project$Login_State$update = F2(
 					ctor: '_Tuple3',
 					_0: _elm_lang$core$Native_Utils.update(
 						model,
-						{username: _p0._0}),
+						{
+							loginCredentials: A2(_user$project$Login_State$updateUsername, _p0._0, model.loginCredentials)
+						}),
 					_1: _elm_lang$core$Platform_Cmd$none,
 					_2: _elm_lang$core$Maybe$Nothing
 				};
@@ -15386,7 +15408,9 @@ var _user$project$Login_State$update = F2(
 					ctor: '_Tuple3',
 					_0: _elm_lang$core$Native_Utils.update(
 						model,
-						{password: _p0._0}),
+						{
+							loginCredentials: A2(_user$project$Login_State$updatePassword, _p0._0, model.loginCredentials)
+						}),
 					_1: _elm_lang$core$Platform_Cmd$none,
 					_2: _elm_lang$core$Maybe$Nothing
 				};
@@ -15394,7 +15418,7 @@ var _user$project$Login_State$update = F2(
 				return {
 					ctor: '_Tuple3',
 					_0: model,
-					_1: A2(_user$project$Login_Rest$login, model.username, model.password),
+					_1: A2(_user$project$Login_Rest$login, model.loginCredentials.username, model.loginCredentials.password),
 					_2: _elm_lang$core$Maybe$Nothing
 				};
 			default:
@@ -15441,48 +15465,95 @@ var _user$project$App_State$showFlash = F2(
 			_1: removeTask
 		};
 	});
-var _user$project$App_State$updateModelWithToken = F2(
+var _user$project$App_State$decodeContext = _elm_lang$core$Json_Decode$decodeValue(
+	A2(
+		_elm_lang$core$Json_Decode$map,
+		_user$project$Shared_Types$Context,
+		A2(
+			_elm_lang$core$Json_Decode$field,
+			'jwtToken',
+			_elm_lang$core$Json_Decode$nullable(_elm_lang$core$Json_Decode$string))));
+var _user$project$App_State$mapStorageInput = function (input) {
+	var _p1 = _user$project$App_State$decodeContext(input);
+	if (_p1.ctor === 'Ok') {
+		return _user$project$App_Types$SetContext(_p1._0);
+	} else {
+		var _p2 = A2(_elm_lang$core$Debug$log, 'Error in mapStorageInput:', _p1._0);
+		return _user$project$App_Types$NoOp;
+	}
+};
+var _user$project$App_State$encodeContext = function (context) {
+	var encodedToken = function () {
+		var _p3 = context.jwtToken;
+		if (_p3.ctor === 'Just') {
+			return _elm_lang$core$Json_Encode$string(_p3._0);
+		} else {
+			return _elm_lang$core$Json_Encode$null;
+		}
+	}();
+	return _elm_lang$core$Json_Encode$object(
+		{
+			ctor: '::',
+			_0: {ctor: '_Tuple2', _0: 'jwtToken', _1: encodedToken},
+			_1: {ctor: '[]'}
+		});
+};
+var _user$project$App_State$storageInput = _elm_lang$core$Native_Platform.incomingPort('storageInput', _elm_lang$core$Json_Decode$value);
+var _user$project$App_State$subscriptions = function (model) {
+	return _user$project$App_State$storageInput(_user$project$App_State$mapStorageInput);
+};
+var _user$project$App_State$storage = _elm_lang$core$Native_Platform.outgoingPort(
+	'storage',
+	function (v) {
+		return v;
+	});
+var _user$project$App_State$sendToStorage = function (model) {
+	return _user$project$App_State$storage(
+		_user$project$App_State$encodeContext(model.context));
+};
+var _user$project$App_State$updateContextWithToken = F2(
 	function (token, model) {
 		var context = model.context;
 		var newContext = _elm_lang$core$Native_Utils.update(
 			context,
 			{jwtToken: token});
-		return _elm_lang$core$Native_Utils.update(
+		var newModel = _elm_lang$core$Native_Utils.update(
 			model,
 			{context: newContext});
+		return {
+			ctor: '_Tuple2',
+			_0: newModel,
+			_1: _user$project$App_State$sendToStorage(newModel)
+		};
 	});
 var _user$project$App_State$interpretLoginMsg = F2(
 	function (msg, model) {
-		var _p1 = msg;
-		if (_p1.ctor === 'Nothing') {
+		var _p4 = msg;
+		if (_p4.ctor === 'Nothing') {
 			return {ctor: '_Tuple2', _0: model, _1: _elm_lang$core$Platform_Cmd$none};
 		} else {
-			var _p2 = _p1._0;
-			if (_p2.ctor === 'Token') {
-				return {
-					ctor: '_Tuple2',
-					_0: A2(
-						_user$project$App_State$updateModelWithToken,
-						_elm_lang$core$Maybe$Just(_p2._0),
-						model),
-					_1: _elm_lang$core$Platform_Cmd$none
-				};
+			var _p5 = _p4._0;
+			if (_p5.ctor === 'Token') {
+				return A2(
+					_user$project$App_State$updateContextWithToken,
+					_elm_lang$core$Maybe$Just(_p5._0),
+					model);
 			} else {
-				return A2(_user$project$App_State$showFlash, _p2._0, model);
+				return A2(_user$project$App_State$showFlash, _p5._0, model);
 			}
 		}
 	});
 var _user$project$App_State$update = F2(
 	function (msg, model) {
-		var _p3 = msg;
-		switch (_p3.ctor) {
+		var _p6 = msg;
+		switch (_p6.ctor) {
 			case 'UrlChange':
-				var newRoute = _user$project$App_Routes$parseLocation(_p3._0);
+				var newRoute = _user$project$App_Routes$parseLocation(_p6._0);
 				var newModel = _elm_lang$core$Native_Utils.update(
 					model,
 					{route: newRoute});
-				var _p4 = newRoute;
-				switch (_p4.ctor) {
+				var _p7 = newRoute;
+				switch (_p7.ctor) {
 					case 'PostsRoute':
 						return {
 							ctor: '_Tuple2',
@@ -15496,15 +15567,15 @@ var _user$project$App_State$update = F2(
 							_1: A2(
 								_elm_lang$core$Platform_Cmd$map,
 								_user$project$App_Types$ArticleMsg,
-								_user$project$Article_Rest$fetch(_p4._0))
+								_user$project$Article_Rest$fetch(_p7._0))
 						};
 					default:
 						return {ctor: '_Tuple2', _0: newModel, _1: _elm_lang$core$Platform_Cmd$none};
 				}
 			case 'ArticleMsg':
-				var _p5 = A2(_user$project$Article_State$update, _p3._0, model.articleModel);
-				var newModel = _p5._0;
-				var cmd = _p5._1;
+				var _p8 = A2(_user$project$Article_State$update, _p6._0, model.articleModel);
+				var newModel = _p8._0;
+				var cmd = _p8._1;
 				return {
 					ctor: '_Tuple2',
 					_0: _elm_lang$core$Native_Utils.update(
@@ -15513,9 +15584,9 @@ var _user$project$App_State$update = F2(
 					_1: _elm_lang$core$Platform_Cmd$none
 				};
 			case 'DashboardMsg':
-				var _p6 = A2(_user$project$Dashboard_State$update, _p3._0, model.dashboardModel);
-				var newModel = _p6._0;
-				var cmd = _p6._1;
+				var _p9 = A2(_user$project$Dashboard_State$update, _p6._0, model.dashboardModel);
+				var newModel = _p9._0;
+				var cmd = _p9._1;
 				return {
 					ctor: '_Tuple2',
 					_0: _elm_lang$core$Native_Utils.update(
@@ -15524,13 +15595,13 @@ var _user$project$App_State$update = F2(
 					_1: _elm_lang$core$Platform_Cmd$none
 				};
 			case 'LoginMsg':
-				var _p7 = A2(_user$project$Login_State$update, _p3._0, model.loginModel);
-				var newLoginModel = _p7._0;
-				var newCmd = _p7._1;
-				var outMsg = _p7._2;
-				var _p8 = A2(_user$project$App_State$interpretLoginMsg, outMsg, model);
-				var newModel = _p8._0;
-				var newOutCmd = _p8._1;
+				var _p10 = A2(_user$project$Login_State$update, _p6._0, model.loginModel);
+				var newLoginModel = _p10._0;
+				var newCmd = _p10._1;
+				var outMsg = _p10._2;
+				var _p11 = A2(_user$project$App_State$interpretLoginMsg, outMsg, model);
+				var newModel = _p11._0;
+				var newOutCmd = _p11._1;
 				return A2(
 					_elm_lang$core$Platform_Cmd_ops['!'],
 					_elm_lang$core$Native_Utils.update(
@@ -15545,7 +15616,7 @@ var _user$project$App_State$update = F2(
 							_1: {ctor: '[]'}
 						}
 					});
-			default:
+			case 'RemoveFlash':
 				return {
 					ctor: '_Tuple2',
 					_0: _elm_lang$core$Native_Utils.update(
@@ -15554,12 +15625,22 @@ var _user$project$App_State$update = F2(
 							flashMessages: A2(
 								_elm_lang$core$List$filter,
 								function (f) {
-									return !_elm_lang$core$Native_Utils.eq(f, _p3._0);
+									return !_elm_lang$core$Native_Utils.eq(f, _p6._0);
 								},
 								model.flashMessages)
 						}),
 					_1: _elm_lang$core$Platform_Cmd$none
 				};
+			case 'SetContext':
+				return {
+					ctor: '_Tuple2',
+					_0: _elm_lang$core$Native_Utils.update(
+						model,
+						{context: _p6._0}),
+					_1: _elm_lang$core$Platform_Cmd$none
+				};
+			default:
+				return {ctor: '_Tuple2', _0: model, _1: _elm_lang$core$Platform_Cmd$none};
 		}
 	});
 var _user$project$App_State$init = function (location) {
@@ -16453,39 +16534,45 @@ var _user$project$Article_View$view = function (model) {
 	}
 };
 
-var _user$project$Login_View$_p0 = _rtfeldman$elm_css_helpers$Html_CssHelpers$withNamespace('bbsLogin');
-var _user$project$Login_View$id = _user$project$Login_View$_p0.id;
-var _user$project$Login_View$class = _user$project$Login_View$_p0.$class;
-var _user$project$Login_View$classList = _user$project$Login_View$_p0.classList;
-var _user$project$Login_View$view = function (model) {
-	return A2(
-		_elm_lang$html$Html$div,
-		{
-			ctor: '::',
-			_0: _user$project$Login_View$class(
-				{
+var _user$project$Login_View$loginFrame = function (model) {
+	return {
+		ctor: '::',
+		_0: A2(
+			_elm_lang$html$Html$input,
+			{
+				ctor: '::',
+				_0: _elm_lang$html$Html_Events$onInput(_user$project$Login_Types$UsernameChange),
+				_1: {
 					ctor: '::',
-					_0: _user$project$Login_Style$Container,
-					_1: {ctor: '[]'}
-				}),
-			_1: {ctor: '[]'}
-		},
-		{
+					_0: _elm_lang$html$Html_Attributes$type_('text'),
+					_1: {
+						ctor: '::',
+						_0: _elm_lang$html$Html_Attributes$placeholder('Username'),
+						_1: {
+							ctor: '::',
+							_0: _elm_lang$html$Html_Attributes$value(model.username),
+							_1: {ctor: '[]'}
+						}
+					}
+				}
+			},
+			{ctor: '[]'}),
+		_1: {
 			ctor: '::',
 			_0: A2(
 				_elm_lang$html$Html$input,
 				{
 					ctor: '::',
-					_0: _elm_lang$html$Html_Events$onInput(_user$project$Login_Types$UsernameChange),
+					_0: _elm_lang$html$Html_Events$onInput(_user$project$Login_Types$PasswordChange),
 					_1: {
 						ctor: '::',
-						_0: _elm_lang$html$Html_Attributes$type_('text'),
+						_0: _elm_lang$html$Html_Attributes$type_('password'),
 						_1: {
 							ctor: '::',
-							_0: _elm_lang$html$Html_Attributes$placeholder('Username'),
+							_0: _elm_lang$html$Html_Attributes$placeholder('Password'),
 							_1: {
 								ctor: '::',
-								_0: _elm_lang$html$Html_Attributes$value(model.username),
+								_0: _elm_lang$html$Html_Attributes$value(model.password),
 								_1: {ctor: '[]'}
 							}
 						}
@@ -16495,44 +16582,46 @@ var _user$project$Login_View$view = function (model) {
 			_1: {
 				ctor: '::',
 				_0: A2(
-					_elm_lang$html$Html$input,
+					_elm_lang$html$Html$button,
 					{
 						ctor: '::',
-						_0: _elm_lang$html$Html_Events$onInput(_user$project$Login_Types$PasswordChange),
-						_1: {
-							ctor: '::',
-							_0: _elm_lang$html$Html_Attributes$type_('password'),
-							_1: {
-								ctor: '::',
-								_0: _elm_lang$html$Html_Attributes$placeholder('Password'),
-								_1: {
-									ctor: '::',
-									_0: _elm_lang$html$Html_Attributes$value(model.password),
-									_1: {ctor: '[]'}
-								}
-							}
-						}
+						_0: _elm_lang$html$Html_Events$onClick(_user$project$Login_Types$Login),
+						_1: {ctor: '[]'}
 					},
-					{ctor: '[]'}),
-				_1: {
-					ctor: '::',
-					_0: A2(
-						_elm_lang$html$Html$button,
-						{
-							ctor: '::',
-							_0: _elm_lang$html$Html_Events$onClick(_user$project$Login_Types$Login),
-							_1: {ctor: '[]'}
-						},
-						{
-							ctor: '::',
-							_0: _elm_lang$html$Html$text('Login'),
-							_1: {ctor: '[]'}
-						}),
-					_1: {ctor: '[]'}
-				}
+					{
+						ctor: '::',
+						_0: _elm_lang$html$Html$text('Login'),
+						_1: {ctor: '[]'}
+					}),
+				_1: {ctor: '[]'}
 			}
-		});
+		}
+	};
 };
+var _user$project$Login_View$_p0 = _rtfeldman$elm_css_helpers$Html_CssHelpers$withNamespace('bbsLogin');
+var _user$project$Login_View$id = _user$project$Login_View$_p0.id;
+var _user$project$Login_View$class = _user$project$Login_View$_p0.$class;
+var _user$project$Login_View$classList = _user$project$Login_View$_p0.classList;
+var _user$project$Login_View$view = F2(
+	function (model, context) {
+		return A2(
+			_elm_lang$html$Html$div,
+			{
+				ctor: '::',
+				_0: _user$project$Login_View$class(
+					{
+						ctor: '::',
+						_0: _user$project$Login_Style$Container,
+						_1: {ctor: '[]'}
+					}),
+				_1: {ctor: '[]'}
+			},
+			_elm_lang$core$Native_Utils.eq(context.jwtToken, _elm_lang$core$Maybe$Nothing) ? _user$project$Login_View$loginFrame(model.loginCredentials) : {
+				ctor: '::',
+				_0: _elm_lang$html$Html$text('Hahaaa!'),
+				_1: {ctor: '[]'}
+			});
+	});
 
 var _user$project$App_View$page = function (model) {
 	var _p0 = model.route;
@@ -16636,7 +16725,7 @@ var _user$project$App_View$view = function (model) {
 								_0: A2(
 									_elm_lang$html$Html$map,
 									_user$project$App_Types$LoginMsg,
-									_user$project$Login_View$view(model.loginModel)),
+									A2(_user$project$Login_View$view, model.loginModel, model.context)),
 								_1: {ctor: '[]'}
 							};
 						} else {
@@ -16726,14 +16815,7 @@ var _user$project$App_View$view = function (model) {
 var _user$project$Main$main = A2(
 	_elm_lang$navigation$Navigation$program,
 	_user$project$App_Types$UrlChange,
-	{
-		init: _user$project$App_State$init,
-		view: _user$project$App_View$view,
-		update: _user$project$App_State$update,
-		subscriptions: function (_p0) {
-			return _elm_lang$core$Platform_Sub$none;
-		}
-	})();
+	{init: _user$project$App_State$init, view: _user$project$App_View$view, update: _user$project$App_State$update, subscriptions: _user$project$App_State$subscriptions})();
 
 var Elm = {};
 Elm['Main'] = Elm['Main'] || {};

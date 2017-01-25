@@ -16,13 +16,23 @@ type OutMsg
     | Token String
 
 
-type alias Model =
+type alias LoginCredentials =
     { username : String
     , password : String
     }
 
 
-initialModel =
+type alias Model =
+    { loginCredentials : LoginCredentials
+    }
+
+
+initialLoginCredentials =
     { username = ""
     , password = ""
+    }
+
+
+initialModel =
+    { loginCredentials = initialLoginCredentials
     }

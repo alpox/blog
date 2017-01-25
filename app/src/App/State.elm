@@ -1,4 +1,4 @@
-module App.State exposing (..)
+port module App.State exposing (..)
 
 import Navigation
 import App.Types exposing (..)
@@ -9,9 +9,24 @@ import Dashboard.Rest as DashboardService
 import Dashboard.State as DashboardState
 import Login.State as LoginState
 import Login.Types as Login
-import Shared.Types exposing (FlashMessage(..))
+import Shared.Types exposing (FlashMessage(..), Context)
 import Task
 import Process
+import Json.Decode as Decode
+import Json.Encode as Encode
+
+
+-- INPUT PORTS
+
+
+port storageInput : (Decode.Value -> msg) -> Sub msg
+
+
+
+-- OUTPUT PORTS
+
+
+port storage : Encode.Value -> Cmd msg
 
 
 init : Navigation.Location -> ( Model, Cmd Msg )
@@ -23,16 +38,66 @@ init location =
         update (UrlChange location) (initialModel currentRoute)
 
 
-updateModelWithToken : Maybe String -> Model -> Model
-updateModelWithToken token model =
+subscriptions : Model -> Sub Msg
+subscriptions model =
+    storageInput mapStorageInput
+
+
+encodeContext : Context -> Encode.Value
+encodeContext context =
+    let
+        encodedToken =
+            case context.jwtToken of
+                Just token ->
+                    Encode.string token
+
+                Nothing ->
+                    Encode.null
+    in
+        Encode.object
+            [ ( "jwtToken", encodedToken )
+            ]
+
+
+decodeContext : Decode.Value -> Result String Context
+decodeContext =
+    Decode.map Context
+        (Decode.field "jwtToken" (Decode.nullable Decode.string))
+        |> Decode.decodeValue
+
+
+mapStorageInput : Decode.Value -> Msg
+mapStorageInput input =
+    case decodeContext input of
+        Ok context ->
+            SetContext context
+
+        Err errorMessage ->
+            let
+                _ =
+                    Debug.log "Error in mapStorageInput:" errorMessage
+            in
+                NoOp
+
+
+sendToStorage : Model -> Cmd Msg
+sendToStorage model =
+    encodeContext model.context |> storage
+
+
+updateContextWithToken : Maybe String -> Model -> ( Model, Cmd Msg )
+updateContextWithToken token model =
     let
         context =
             model.context
 
         newContext =
             { context | jwtToken = token }
+
+        newModel =
+            { model | context = newContext }
     in
-        { model | context = newContext }
+        ( newModel, sendToStorage newModel )
 
 
 showFlash : FlashMessage -> Model -> ( Model, Cmd Msg )
@@ -56,7 +121,7 @@ interpretLoginMsg msg model =
         Just outMsg ->
             case outMsg of
                 Login.Token token ->
-                    ( updateModelWithToken (Just token) model, Cmd.none )
+                    updateContextWithToken (Just token) model
 
                 Login.Flash flashMsg ->
                     showFlash flashMsg model
@@ -109,3 +174,9 @@ update msg model =
 
         RemoveFlash flashMsg ->
             ( { model | flashMessages = List.filter (\f -> f /= flashMsg) model.flashMessages }, Cmd.none )
+
+        SetContext context ->
+            ( { model | context = context }, Cmd.none )
+
+        NoOp ->
+            ( model, Cmd.none )

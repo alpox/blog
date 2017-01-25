@@ -13,7 +13,15 @@
         <%= render @view_module, @view_template, assigns %>
     </div>
     <script src="<%= static_path(@conn, "/app.js") %>"></script>
-    <script>Elm.Main.embed(document.querySelector("div"));</script>
+    <script>
+      var app = Elm.Main.embed(document.querySelector("div"));
+      var currentModel = localStorage.getItem("context");
+      app.ports.storageInput.send(JSON.parse(currentModel));
+      app.ports.storage.subscribe(function(data){
+        console.log(data);
+        localStorage.setItem('context', JSON.stringify(data));
+      });
+    </script>
     <script>window.onload = () => hljs.initHighlighting();</script>
   </body>
 </html>

@@ -13,6 +13,8 @@ type Msg
     | ArticleMsg Article.Msg
     | DashboardMsg Dashboard.Msg
     | LoginMsg Login.Msg
+    | SetContext Context
+    | NoOp
 
 
 type Route

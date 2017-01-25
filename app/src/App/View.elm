@@ -55,7 +55,7 @@ view model =
             ++ [ div [ class [ Style.Container ] ] <|
                     case model.route of
                         LoginRoute ->
-                            [ Html.map LoginMsg (Login.view model.loginModel) ]
+                            [ Html.map LoginMsg (Login.view model.loginModel model.context) ]
 
                         _ ->
                             [ div [ class [ Style.ProfilePicture ] ] []
