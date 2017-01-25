@@ -3,22 +3,32 @@ module App.Style exposing (..)
 import Css exposing (..)
 import Css.Elements exposing (html, body, h1, h2, h3, h4, footer, li, a)
 import Css.Namespace exposing (namespace)
-
 import Article.Style
 import Dashboard.Style
+import Login.Style
+
 
 type CssClasses
     = PageHost
     | Container
     | ProfilePicture
     | SocialLinks
+    | FlashMessage
+    | FlashInfo
+    | FlashWarn
+    | FlashError
+    | FullHeight
+
 
 footerSize : Float
 footerSize =
     100
 
+
 css : List Stylesheet
-css = appCss :: Article.Style.css :: Dashboard.Style.css :: []
+css =
+    appCss :: Article.Style.css :: Dashboard.Style.css :: Login.Style.css :: []
+
 
 appCss : Stylesheet
 appCss =
@@ -28,13 +38,13 @@ appCss =
             , padding (px 0)
             , minHeight (pct 100)
             , height (pct 100)
+            , fontFamilies [ "Droid Sans", .value sansSerif ]
             ]
         , h1
             [ textAlign center
             ]
         , each [ h1, h2, h3, h4 ]
             [ color (rgb 40 40 40)
-            , fontFamilies [ "Droid Sans", .value sansSerif ]
             ]
         , footer
             [ position absolute
@@ -82,5 +92,22 @@ appCss =
             , backgroundSize cover
             , margin auto
             , borderRadius (pct 100)
+            ]
+        , (.) FlashMessage
+            [ width (pct 100)
+            , padding2 (px 4) (px 16)
+            , borderBottom3 (px 2) solid (hex "666")
+            ]
+        , (.) FlashInfo
+            [ backgroundColor (hex "8BC34A")
+            ]
+        , (.) FlashWarn
+            [ backgroundColor (hex "FFC107")
+            ]
+        , (.) FlashError
+            [ backgroundColor (hex "FF5722")
+            ]
+        , (.) FullHeight
+            [ height (pct 100)
             ]
         ]

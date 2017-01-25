@@ -3,6 +3,7 @@ html, body {
     padding: 0px;
     min-height: 100%;
     height: 100%;
+    font-family: Droid Sans, sans-serif;
 }
 
 h1 {
@@ -11,7 +12,6 @@ h1 {
 
 h1, h2, h3, h4 {
     color: rgb(40, 40, 40);
-    font-family: Droid Sans, sans-serif;
 }
 
 footer {
@@ -65,6 +65,28 @@ footer  .bbsSocialLinks > a {
     border-radius: 100%;
 }
 
+.bbsFlashMessage {
+    width: 100%;
+    padding: 4px 16px;
+    border-bottom: 2px solid #666;
+}
+
+.bbsFlashInfo {
+    background-color: #8BC34A;
+}
+
+.bbsFlashWarn {
+    background-color: #FFC107;
+}
+
+.bbsFlashError {
+    background-color: #FF5722;
+}
+
+.bbsFullHeight {
+    height: 100%;
+}
+
 .bbsArticlePost  h1 {
     text-align: left;
     font-size: 2em;
@@ -94,4 +116,34 @@ footer  .bbsSocialLinks > a {
 .bbsDashboardPostAbstractContainer > .bbsDashboardPostAbstract {
     padding-top: 16px;
     padding-bottom: 16px;
+}
+
+.bbsLoginContainer {
+    width: 70%;
+    min-width: 500px;
+    padding: 16px;
+    margin: auto;
+    border: 2px solid #CCC;
+    background-color: #FAFAFA;
+}
+
+.bbsLoginContainer  input {
+    display: block;
+    padding: 4px 8px;
+    font-size: 1.1em;
+    margin-bottom: 8px;
+}
+
+.bbsLoginContainer  button {
+    background-color: #FFF;
+    border-style: none;
+    border-radius: 2px;
+    padding: 6px 12px;
+    box-shadow: 1px 1px 4px #AAA;
+    cursor: pointer;
+    font-weight: bold;
+}
+
+.bbsLoginContainer  button:hover {
+    box-shadow: 1px 1px 10px #AAA;
 }
