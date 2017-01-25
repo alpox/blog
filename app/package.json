@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "description": "A private blogging system.",
   "scripts": {
-    "watch": "npm run build && concurrently --kill-others --prefix \"[{name}]\" --names \"App,CSS\" \"npm run watch-app\" \"npm run watch-css\"",
+    "watch": "npm run build && concurrently --kill-others --raw \"npm run watch-app\" \"npm run watch-css\"",
     "watch-app": "chokidar 'src/**/*.elm' -c 'npm run build'",
     "watch-css": "chokidar 'src/**/Style.elm' -c 'npm run build-css'",
     "build": "mkdir -p ../priv/static && npm run clean && npm run build-app && npm run build-css",

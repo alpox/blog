@@ -8960,6 +8960,121 @@ var _elm_lang$html$Html_Attributes$classList = function (list) {
 };
 var _elm_lang$html$Html_Attributes$style = _elm_lang$virtual_dom$VirtualDom$style;
 
+var _elm_lang$html$Html_Events$keyCode = A2(_elm_lang$core$Json_Decode$field, 'keyCode', _elm_lang$core$Json_Decode$int);
+var _elm_lang$html$Html_Events$targetChecked = A2(
+	_elm_lang$core$Json_Decode$at,
+	{
+		ctor: '::',
+		_0: 'target',
+		_1: {
+			ctor: '::',
+			_0: 'checked',
+			_1: {ctor: '[]'}
+		}
+	},
+	_elm_lang$core$Json_Decode$bool);
+var _elm_lang$html$Html_Events$targetValue = A2(
+	_elm_lang$core$Json_Decode$at,
+	{
+		ctor: '::',
+		_0: 'target',
+		_1: {
+			ctor: '::',
+			_0: 'value',
+			_1: {ctor: '[]'}
+		}
+	},
+	_elm_lang$core$Json_Decode$string);
+var _elm_lang$html$Html_Events$defaultOptions = _elm_lang$virtual_dom$VirtualDom$defaultOptions;
+var _elm_lang$html$Html_Events$onWithOptions = _elm_lang$virtual_dom$VirtualDom$onWithOptions;
+var _elm_lang$html$Html_Events$on = _elm_lang$virtual_dom$VirtualDom$on;
+var _elm_lang$html$Html_Events$onFocus = function (msg) {
+	return A2(
+		_elm_lang$html$Html_Events$on,
+		'focus',
+		_elm_lang$core$Json_Decode$succeed(msg));
+};
+var _elm_lang$html$Html_Events$onBlur = function (msg) {
+	return A2(
+		_elm_lang$html$Html_Events$on,
+		'blur',
+		_elm_lang$core$Json_Decode$succeed(msg));
+};
+var _elm_lang$html$Html_Events$onSubmitOptions = _elm_lang$core$Native_Utils.update(
+	_elm_lang$html$Html_Events$defaultOptions,
+	{preventDefault: true});
+var _elm_lang$html$Html_Events$onSubmit = function (msg) {
+	return A3(
+		_elm_lang$html$Html_Events$onWithOptions,
+		'submit',
+		_elm_lang$html$Html_Events$onSubmitOptions,
+		_elm_lang$core$Json_Decode$succeed(msg));
+};
+var _elm_lang$html$Html_Events$onCheck = function (tagger) {
+	return A2(
+		_elm_lang$html$Html_Events$on,
+		'change',
+		A2(_elm_lang$core$Json_Decode$map, tagger, _elm_lang$html$Html_Events$targetChecked));
+};
+var _elm_lang$html$Html_Events$onInput = function (tagger) {
+	return A2(
+		_elm_lang$html$Html_Events$on,
+		'input',
+		A2(_elm_lang$core$Json_Decode$map, tagger, _elm_lang$html$Html_Events$targetValue));
+};
+var _elm_lang$html$Html_Events$onMouseOut = function (msg) {
+	return A2(
+		_elm_lang$html$Html_Events$on,
+		'mouseout',
+		_elm_lang$core$Json_Decode$succeed(msg));
+};
+var _elm_lang$html$Html_Events$onMouseOver = function (msg) {
+	return A2(
+		_elm_lang$html$Html_Events$on,
+		'mouseover',
+		_elm_lang$core$Json_Decode$succeed(msg));
+};
+var _elm_lang$html$Html_Events$onMouseLeave = function (msg) {
+	return A2(
+		_elm_lang$html$Html_Events$on,
+		'mouseleave',
+		_elm_lang$core$Json_Decode$succeed(msg));
+};
+var _elm_lang$html$Html_Events$onMouseEnter = function (msg) {
+	return A2(
+		_elm_lang$html$Html_Events$on,
+		'mouseenter',
+		_elm_lang$core$Json_Decode$succeed(msg));
+};
+var _elm_lang$html$Html_Events$onMouseUp = function (msg) {
+	return A2(
+		_elm_lang$html$Html_Events$on,
+		'mouseup',
+		_elm_lang$core$Json_Decode$succeed(msg));
+};
+var _elm_lang$html$Html_Events$onMouseDown = function (msg) {
+	return A2(
+		_elm_lang$html$Html_Events$on,
+		'mousedown',
+		_elm_lang$core$Json_Decode$succeed(msg));
+};
+var _elm_lang$html$Html_Events$onDoubleClick = function (msg) {
+	return A2(
+		_elm_lang$html$Html_Events$on,
+		'dblclick',
+		_elm_lang$core$Json_Decode$succeed(msg));
+};
+var _elm_lang$html$Html_Events$onClick = function (msg) {
+	return A2(
+		_elm_lang$html$Html_Events$on,
+		'click',
+		_elm_lang$core$Json_Decode$succeed(msg));
+};
+var _elm_lang$html$Html_Events$Options = F2(
+	function (a, b) {
+		return {stopPropagation: a, preventDefault: b};
+	});
+
 var _elm_lang$html$Html_Lazy$lazy3 = _elm_lang$virtual_dom$VirtualDom$lazy3;
 var _elm_lang$html$Html_Lazy$lazy2 = _elm_lang$virtual_dom$VirtualDom$lazy2;
 var _elm_lang$html$Html_Lazy$lazy = _elm_lang$virtual_dom$VirtualDom$lazy;
@@ -14816,13 +14931,36 @@ var _user$project$Dashboard_Types$Retrieve = function (a) {
 	return {ctor: 'Retrieve', _0: a};
 };
 
-var _user$project$App_Types$initialModel = function (route) {
-	return {route: route, articleModel: _user$project$Article_Types$initialModel, dashboardModel: _user$project$Dashboard_Types$initialModel};
-};
-var _user$project$App_Types$Model = F3(
+var _user$project$Login_Types$initialModel = {username: '', password: '', error: ''};
+var _user$project$Login_Types$Model = F3(
 	function (a, b, c) {
-		return {route: a, articleModel: b, dashboardModel: c};
+		return {username: a, password: b, error: c};
 	});
+var _user$project$Login_Types$PasswordChange = function (a) {
+	return {ctor: 'PasswordChange', _0: a};
+};
+var _user$project$Login_Types$UsernameChange = function (a) {
+	return {ctor: 'UsernameChange', _0: a};
+};
+var _user$project$Login_Types$Login = {ctor: 'Login'};
+var _user$project$Login_Types$LoginResponse = function (a) {
+	return {ctor: 'LoginResponse', _0: a};
+};
+
+var _user$project$App_Types$initialContext = {jwtToken: _elm_lang$core$Maybe$Nothing};
+var _user$project$App_Types$initialModel = function (route) {
+	return {route: route, articleModel: _user$project$Article_Types$initialModel, dashboardModel: _user$project$Dashboard_Types$initialModel, loginModel: _user$project$Login_Types$initialModel, context: _user$project$App_Types$initialContext};
+};
+var _user$project$App_Types$Context = function (a) {
+	return {jwtToken: a};
+};
+var _user$project$App_Types$Model = F5(
+	function (a, b, c, d, e) {
+		return {route: a, articleModel: b, dashboardModel: c, loginModel: d, context: e};
+	});
+var _user$project$App_Types$LoginMsg = function (a) {
+	return {ctor: 'LoginMsg', _0: a};
+};
 var _user$project$App_Types$DashboardMsg = function (a) {
 	return {ctor: 'DashboardMsg', _0: a};
 };
@@ -14833,6 +14971,7 @@ var _user$project$App_Types$UrlChange = function (a) {
 	return {ctor: 'UrlChange', _0: a};
 };
 var _user$project$App_Types$NotFoundRoute = {ctor: 'NotFoundRoute'};
+var _user$project$App_Types$LoginRoute = {ctor: 'LoginRoute'};
 var _user$project$App_Types$PostRoute = function (a) {
 	return {ctor: 'PostRoute', _0: a};
 };
@@ -14857,7 +14996,14 @@ var _user$project$App_Routes$matchers = _evancz$url_parser$UrlParser$oneOf(
 						_evancz$url_parser$UrlParser_ops['</>'],
 						_evancz$url_parser$UrlParser$s('post'),
 						_evancz$url_parser$UrlParser$string)),
-				_1: {ctor: '[]'}
+				_1: {
+					ctor: '::',
+					_0: A2(
+						_evancz$url_parser$UrlParser$map,
+						_user$project$App_Types$LoginRoute,
+						_evancz$url_parser$UrlParser$s('login')),
+					_1: {ctor: '[]'}
+				}
 			}
 		}
 	});
@@ -15061,6 +15207,101 @@ var _user$project$Dashboard_State$update = F2(
 		}
 	});
 
+var _user$project$Login_Rest$decoder = A2(
+	_elm_lang$core$Json_Decode$at,
+	{
+		ctor: '::',
+		_0: 'login',
+		_1: {
+			ctor: '::',
+			_0: 'token',
+			_1: {ctor: '[]'}
+		}
+	},
+	_elm_lang$core$Json_Decode$string);
+var _user$project$Login_Rest$login = F2(
+	function (username, password) {
+		return A3(
+			_user$project$Util_Graphql$send,
+			_user$project$Login_Types$LoginResponse,
+			_user$project$Login_Rest$decoder,
+			A2(
+				_user$project$Util_Graphql$withVariable,
+				{
+					ctor: '_Tuple2',
+					_0: 'password',
+					_1: _elm_lang$core$Json_Encode$string(password)
+				},
+				A2(
+					_user$project$Util_Graphql$withVariable,
+					{
+						ctor: '_Tuple2',
+						_0: 'username',
+						_1: _elm_lang$core$Json_Encode$string(username)
+					},
+					_user$project$Util_Graphql$query('\n    mutation($username: String!, $password: String!) {\n        login(username: $username, password: $password) {\n            token\n        }\n    }\n    '))));
+	});
+
+var _user$project$Login_State$update = F2(
+	function (msg, model) {
+		var _p0 = msg;
+		switch (_p0.ctor) {
+			case 'UsernameChange':
+				return {
+					ctor: '_Tuple3',
+					_0: _elm_lang$core$Native_Utils.update(
+						model,
+						{username: _p0._0}),
+					_1: _elm_lang$core$Platform_Cmd$none,
+					_2: _elm_lang$core$Maybe$Nothing
+				};
+			case 'PasswordChange':
+				return {
+					ctor: '_Tuple3',
+					_0: _elm_lang$core$Native_Utils.update(
+						model,
+						{password: _p0._0}),
+					_1: _elm_lang$core$Platform_Cmd$none,
+					_2: _elm_lang$core$Maybe$Nothing
+				};
+			case 'Login':
+				return {
+					ctor: '_Tuple3',
+					_0: model,
+					_1: A2(_user$project$Login_Rest$login, model.username, model.password),
+					_2: _elm_lang$core$Maybe$Nothing
+				};
+			default:
+				if (_p0._0.ctor === 'Ok') {
+					return {
+						ctor: '_Tuple3',
+						_0: model,
+						_1: _elm_lang$core$Platform_Cmd$none,
+						_2: _elm_lang$core$Maybe$Just(_p0._0._0)
+					};
+				} else {
+					return {
+						ctor: '_Tuple3',
+						_0: _elm_lang$core$Native_Utils.update(
+							model,
+							{error: 'Incorrect credentials.'}),
+						_1: _elm_lang$core$Platform_Cmd$none,
+						_2: _elm_lang$core$Maybe$Nothing
+					};
+				}
+		}
+	});
+
+var _user$project$App_State$updateModelWithToken = F2(
+	function (token, model) {
+		var context = model.context;
+		var newContext = _elm_lang$core$Native_Utils.update(
+			context,
+			{jwtToken: token});
+		return _elm_lang$core$Native_Utils.update(
+			model,
+			{context: newContext});
+	});
 var _user$project$App_State$update = F2(
 	function (msg, model) {
 		var _p0 = msg;
@@ -15101,7 +15342,7 @@ var _user$project$App_State$update = F2(
 						{articleModel: newModel}),
 					_1: _elm_lang$core$Platform_Cmd$none
 				};
-			default:
+			case 'DashboardMsg':
 				var _p3 = A2(_user$project$Dashboard_State$update, _p0._0, model.dashboardModel);
 				var newModel = _p3._0;
 				var cmd = _p3._1;
@@ -15111,6 +15352,19 @@ var _user$project$App_State$update = F2(
 						model,
 						{dashboardModel: newModel}),
 					_1: _elm_lang$core$Platform_Cmd$none
+				};
+			default:
+				var _p4 = A2(_user$project$Login_State$update, _p0._0, model.loginModel);
+				var newLoginModel = _p4._0;
+				var cmd = _p4._1;
+				var token = _p4._2;
+				var newModel = A2(_user$project$App_State$updateModelWithToken, token, model);
+				return {
+					ctor: '_Tuple2',
+					_0: _elm_lang$core$Native_Utils.update(
+						newModel,
+						{loginModel: newLoginModel}),
+					_1: A2(_elm_lang$core$Platform_Cmd$map, _user$project$App_Types$LoginMsg, cmd)
 				};
 		}
 	});
@@ -15769,6 +16023,87 @@ var _user$project$Article_View$view = function (model) {
 	}
 };
 
+var _user$project$Login_Style$css = function (_p0) {
+	return _rtfeldman$elm_css$Css$stylesheet(
+		A2(_rtfeldman$elm_css$Css_Namespace$namespace, 'bbsLogin', _p0));
+}(
+	{ctor: '[]'});
+var _user$project$Login_Style$NoClass = {ctor: 'NoClass'};
+
+var _user$project$Login_View$view = F2(
+	function (model, context) {
+		return A2(
+			_elm_lang$html$Html$div,
+			{ctor: '[]'},
+			{
+				ctor: '::',
+				_0: A2(
+					_elm_lang$html$Html$input,
+					{
+						ctor: '::',
+						_0: _elm_lang$html$Html_Events$onInput(_user$project$Login_Types$UsernameChange),
+						_1: {
+							ctor: '::',
+							_0: _elm_lang$html$Html_Attributes$type_('text'),
+							_1: {
+								ctor: '::',
+								_0: _elm_lang$html$Html_Attributes$placeholder('Username'),
+								_1: {ctor: '[]'}
+							}
+						}
+					},
+					{ctor: '[]'}),
+				_1: {
+					ctor: '::',
+					_0: A2(
+						_elm_lang$html$Html$input,
+						{
+							ctor: '::',
+							_0: _elm_lang$html$Html_Events$onInput(_user$project$Login_Types$PasswordChange),
+							_1: {
+								ctor: '::',
+								_0: _elm_lang$html$Html_Attributes$type_('password'),
+								_1: {
+									ctor: '::',
+									_0: _elm_lang$html$Html_Attributes$placeholder('Password'),
+									_1: {ctor: '[]'}
+								}
+							}
+						},
+						{ctor: '[]'}),
+					_1: {
+						ctor: '::',
+						_0: A2(
+							_elm_lang$html$Html$button,
+							{
+								ctor: '::',
+								_0: _elm_lang$html$Html_Events$onClick(_user$project$Login_Types$Login),
+								_1: {ctor: '[]'}
+							},
+							{
+								ctor: '::',
+								_0: _elm_lang$html$Html$text('Login'),
+								_1: {ctor: '[]'}
+							}),
+						_1: {
+							ctor: '::',
+							_0: _elm_lang$html$Html$text(
+								(!_elm_lang$core$Native_Utils.eq(context.jwtToken, _elm_lang$core$Maybe$Nothing)) ? 'You are logged in.' : 'You are logged out.'),
+							_1: {
+								ctor: '::',
+								_0: _elm_lang$html$Html$text(model.error),
+								_1: {ctor: '[]'}
+							}
+						}
+					}
+				}
+			});
+	});
+var _user$project$Login_View$_p0 = _rtfeldman$elm_css_helpers$Html_CssHelpers$withNamespace('bbsLogin');
+var _user$project$Login_View$id = _user$project$Login_View$_p0.id;
+var _user$project$Login_View$class = _user$project$Login_View$_p0.$class;
+var _user$project$Login_View$classList = _user$project$Login_View$_p0.classList;
+
 var _user$project$App_View$page = function (model) {
 	var _p0 = model.route;
 	switch (_p0.ctor) {
@@ -15810,83 +16145,97 @@ var _user$project$App_View$view = function (model) {
 				}),
 			_1: {ctor: '[]'}
 		},
-		{
-			ctor: '::',
-			_0: A2(
-				_elm_lang$html$Html$div,
-				{
+		function () {
+			var _p2 = model.route;
+			if (_p2.ctor === 'LoginRoute') {
+				return {
 					ctor: '::',
-					_0: _user$project$App_View$class(
+					_0: A2(
+						_elm_lang$html$Html$map,
+						_user$project$App_Types$LoginMsg,
+						A2(_user$project$Login_View$view, model.loginModel, model.context)),
+					_1: {ctor: '[]'}
+				};
+			} else {
+				return {
+					ctor: '::',
+					_0: A2(
+						_elm_lang$html$Html$div,
 						{
 							ctor: '::',
-							_0: _user$project$App_Style$ProfilePicture,
+							_0: _user$project$App_View$class(
+								{
+									ctor: '::',
+									_0: _user$project$App_Style$ProfilePicture,
+									_1: {ctor: '[]'}
+								}),
 							_1: {ctor: '[]'}
-						}),
-					_1: {ctor: '[]'}
-				},
-				{ctor: '[]'}),
-			_1: {
-				ctor: '::',
-				_0: A2(
-					_elm_lang$html$Html$h1,
-					{ctor: '[]'},
-					{
-						ctor: '::',
-						_0: _elm_lang$html$Html$text('This is alpox\'s blog'),
-						_1: {ctor: '[]'}
-					}),
-				_1: {
-					ctor: '::',
-					_0: _user$project$App_View$page(model),
+						},
+						{ctor: '[]'}),
 					_1: {
 						ctor: '::',
 						_0: A2(
-							_elm_lang$html$Html$footer,
+							_elm_lang$html$Html$h1,
 							{ctor: '[]'},
 							{
 								ctor: '::',
+								_0: _elm_lang$html$Html$text('This is alpox\'s blog'),
+								_1: {ctor: '[]'}
+							}),
+						_1: {
+							ctor: '::',
+							_0: _user$project$App_View$page(model),
+							_1: {
+								ctor: '::',
 								_0: A2(
-									_elm_lang$html$Html$div,
-									{
-										ctor: '::',
-										_0: _user$project$App_View$class(
-											{
-												ctor: '::',
-												_0: _user$project$App_Style$SocialLinks,
-												_1: {ctor: '[]'}
-											}),
-										_1: {ctor: '[]'}
-									},
+									_elm_lang$html$Html$footer,
+									{ctor: '[]'},
 									{
 										ctor: '::',
 										_0: A2(
-											_elm_lang$html$Html$a,
+											_elm_lang$html$Html$div,
 											{
 												ctor: '::',
-												_0: _elm_lang$html$Html_Attributes$href('https://github.com/alpox'),
+												_0: _user$project$App_View$class(
+													{
+														ctor: '::',
+														_0: _user$project$App_Style$SocialLinks,
+														_1: {ctor: '[]'}
+													}),
 												_1: {ctor: '[]'}
 											},
 											{
 												ctor: '::',
 												_0: A2(
-													_elm_lang$html$Html$img,
+													_elm_lang$html$Html$a,
 													{
 														ctor: '::',
-														_0: _elm_lang$html$Html_Attributes$src('/img/github.png'),
+														_0: _elm_lang$html$Html_Attributes$href('https://github.com/alpox'),
 														_1: {ctor: '[]'}
 													},
-													{ctor: '[]'}),
+													{
+														ctor: '::',
+														_0: A2(
+															_elm_lang$html$Html$img,
+															{
+																ctor: '::',
+																_0: _elm_lang$html$Html_Attributes$src('/img/github.png'),
+																_1: {ctor: '[]'}
+															},
+															{ctor: '[]'}),
+														_1: {ctor: '[]'}
+													}),
 												_1: {ctor: '[]'}
 											}),
 										_1: {ctor: '[]'}
 									}),
 								_1: {ctor: '[]'}
-							}),
-						_1: {ctor: '[]'}
+							}
+						}
 					}
-				}
+				};
 			}
-		});
+		}());
 };
 
 var _user$project$Main$main = A2(

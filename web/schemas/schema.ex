@@ -1,19 +1,26 @@
 defmodule Web.Schema do
     use Absinthe.Schema
+    use Absinthe.Ecto, repo: Web.Repo
 
     @desc "A post"
     object :post do
-        field :id, :id
+        field :id, :string
         field :title, :string
         field :content, :string
         field :summary, :string
+        field :user, :user, resolve: assoc(:user)
     end
 
     @desc "A user"
     object :user do
-        field :id, :id
+        field :id, :string
         field :username, :string
         field :email, :string
+        field :posts, list_of(:post), resolve: assoc(:posts)
+    end
+
+    object :session do
+        field :token, :string
     end
 
     input_object :update_user_params do
@@ -24,16 +31,23 @@ defmodule Web.Schema do
 
     mutation do
         field :update_user, type: :user do
-            arg :id, non_null(:integer)
+            arg :id, non_null(:string)
             arg :user, :update_user_params
 
             resolve &Web.UserResolver.update/2
+        end
+
+        field :login, type: :session do
+            arg :username, non_null(:string)
+            arg :password, non_null(:string)
+        
+            resolve &Web.UserResolver.login/2
         end
     end
 
     query do
         field :post, :post do
-            arg :id, non_null(:id)
+            arg :id, non_null(:string)
             resolve &Web.PostResolver.one/2
         end
 

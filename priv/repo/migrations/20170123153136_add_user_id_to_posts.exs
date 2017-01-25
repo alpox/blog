@@ -3,7 +3,7 @@ defmodule Web.Repo.Migrations.AddUserIdToPosts do
 
   def change do
     alter table(:posts) do
-      add :user_id, references(:users)
+      add :user_id, references(:users, type: :uuid)
     end
   end
 end

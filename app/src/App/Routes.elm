@@ -10,6 +10,7 @@ matchers =
         [ map PostsRoute top
         , map PostsRoute (s "posts")
         , map PostRoute (s "post" </> string)
+        , map LoginRoute (s "login")
         ]
 
 parseLocation : Location -> Route

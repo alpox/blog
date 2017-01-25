@@ -1,5 +1,5 @@
 defmodule Web.User do
-  use Web.Model.Schema
+  use Web.Web, :model
 
   @derive {Poison.Encoder, only: [:id, :username, :email]}
   schema "users" do

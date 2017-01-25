@@ -12,7 +12,6 @@ import Util.Markdown
 
 import Html.Lazy exposing (lazy)
 
-
 { id, class, classList } =
     Html.CssHelpers.withNamespace "bbsDashboard"
 

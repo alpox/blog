@@ -1,4 +1,5 @@
 %{"absinthe": {:hex, :absinthe, "1.2.3", "634da49aacc4c9568760cdf3fe8c400ce9368815985e366e893ea8fcbe58f405", [:mix], []},
+  "absinthe_ecto": {:git, "https://github.com/absinthe-graphql/absinthe_ecto.git", "84020ab5c185264182e9387777af10d81d64c1e0", []},
   "absinthe_plug": {:hex, :absinthe_plug, "1.2.0", "5cccb5ee6bb26ab7e0e9285731db1d1ac30864a7217fb1a76b6a3edb3070af4a", [:mix], [{:absinthe, "~> 1.2.0", [hex: :absinthe, optional: false]}, {:plug, "~> 1.0", [hex: :plug, optional: false]}]},
   "base64url": {:hex, :base64url, "0.0.1", "36a90125f5948e3afd7be97662a1504b934dd5dac78451ca6e9abf85a10286be", [:rebar], []},
   "comeonin": {:hex, :comeonin, "3.0.1", "ec71ee1dac6271e7b319d4b14c72f79f51631bd668cd3dcfdd3fe5aea0436bbf", [:make, :mix], [{:elixir_make, "~> 0.4", [hex: :elixir_make, optional: false]}]},

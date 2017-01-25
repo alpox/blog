@@ -11,6 +11,8 @@ import Article.State as ArticleState
 import Dashboard.Rest as DashboardService
 import Dashboard.State as DashboardState
 
+import Login.State as LoginState
+
 init : Navigation.Location -> ( Model, Cmd Msg )
 init location =
     let
@@ -18,6 +20,14 @@ init location =
             parseLocation location
     in
         update (UrlChange location) (initialModel currentRoute)
+
+updateModelWithToken : Maybe String -> Model -> Model
+updateModelWithToken token model =
+    let 
+        context = model.context
+        newContext = { context | jwtToken = token }
+    in
+        { model | context = newContext }
 
 update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
@@ -32,7 +42,7 @@ update msg model =
                 case newRoute of
                     PostsRoute -> (newModel, Cmd.map DashboardMsg DashboardService.fetch)
                     PostRoute id -> (newModel, Cmd.map ArticleMsg (ArticleService.fetch id))
-                    NotFoundRoute -> (newModel, Cmd.none)
+                    _ -> (newModel, Cmd.none)
 
         ArticleMsg subMsg ->
             let
@@ -47,3 +57,11 @@ update msg model =
                     DashboardState.update subMsg model.dashboardModel
             in
                 ( { model | dashboardModel = newModel }, Cmd.none )
+
+        LoginMsg subMsg ->
+            let
+                ( newLoginModel, cmd, token ) =
+                    LoginState.update subMsg model.loginModel
+                newModel = updateModelWithToken token model
+            in
+                ( { newModel | loginModel = newLoginModel }, Cmd.map LoginMsg cmd )
