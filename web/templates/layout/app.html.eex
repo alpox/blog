@@ -2,6 +2,7 @@
 <html>
   <head>
     <link href="https://fonts.googleapis.com/css?family=Droid+Sans" rel="stylesheet">
+    <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">
     <link rel="stylesheet" href="<%= static_path(@conn, "/css/markdown.css") %>">
     <link rel="stylesheet" href="<%= static_path(@conn, "/css/monokai.highlight.css") %>">
     <link rel="stylesheet" href="<%= static_path(@conn, "/style.css") %>" />
@@ -18,7 +19,6 @@
       var currentModel = localStorage.getItem("context");
       app.ports.storageInput.send(JSON.parse(currentModel));
       app.ports.storage.subscribe(function(data){
-        console.log(data);
         localStorage.setItem('context', JSON.stringify(data));
       });
     </script>

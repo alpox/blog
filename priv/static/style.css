@@ -147,3 +147,24 @@ footer  .bbsSocialLinks > a {
 .bbsLoginContainer  button:hover {
     box-shadow: 1px 1px 10px #AAA;
 }
+
+.bbsLoginPostTable {
+    border-collapse: collapse;
+}
+
+.bbsLoginPostTable  th {
+    cursor: pointer;
+    user-select: none;
+}
+
+.bbsLoginPostTable  tr:hover {
+    background-color: #ccc;
+}
+
+.bbsLoginPostTable  td {
+    padding: 4px 16px;
+}
+
+.bbsLoginPostTable  td:first-child > i {
+    cursor: pointer;
+}

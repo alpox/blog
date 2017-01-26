@@ -3,6 +3,7 @@ module Login.State exposing (update)
 import Login.Types exposing (..)
 import Login.Rest exposing (login)
 import Shared.Types exposing (..)
+import Navigation
 
 
 updateUsername : String -> LoginCredentials -> LoginCredentials
@@ -34,3 +35,16 @@ update msg model =
 
         LoginResponse (Err _) ->
             ( model, Cmd.none, Just (Flash (Error "Incorrect login credentials!")) )
+
+        -- Handle result of post
+        Retrieve (Ok newPosts) ->
+            ( { model | posts = newPosts }, Cmd.none, Nothing )
+
+        Retrieve (Err error) ->
+            ( model, Cmd.none, Just (Flash (Error "Was not able to fetch posts")) )
+
+        SetPostTableState state ->
+            ( { model | postTableState = state }, Cmd.none, Nothing )
+
+        StartEdit post ->
+            ( model, Cmd.none, Just (UrlChangeRequest <| "#/edit/" ++ post.id) )

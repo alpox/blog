@@ -4,6 +4,7 @@ import Navigation
 import Article.Types as Article
 import Dashboard.Types as Dashboard
 import Login.Types as Login
+import Edit.Types as Edit
 import Shared.Types exposing (..)
 
 
@@ -13,13 +14,15 @@ type Msg
     | ArticleMsg Article.Msg
     | DashboardMsg Dashboard.Msg
     | LoginMsg Login.Msg
+    | EditMsg Edit.Msg
     | SetContext Context
     | NoOp
 
 
 type Route
     = PostsRoute
-    | PostRoute Article.PostId
+    | PostRoute PostId
+    | EditRoute PostId
     | LoginRoute
     | NotFoundRoute
 
@@ -30,13 +33,8 @@ type alias Model =
     , articleModel : Article.Model
     , dashboardModel : Dashboard.Model
     , loginModel : Login.Model
+    , editModel : Edit.Model
     , context : Context
-    }
-
-
-initialContext : Context
-initialContext =
-    { jwtToken = Nothing
     }
 
 
@@ -47,5 +45,6 @@ initialModel route =
     , articleModel = Article.initialModel
     , dashboardModel = Dashboard.initialModel
     , loginModel = Login.initialModel
+    , editModel = Edit.initialModel
     , context = initialContext
     }

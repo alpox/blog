@@ -5,6 +5,7 @@ import App.Style as Style exposing (..)
 import Dashboard.View as Dashboard
 import Article.View as Article
 import Login.View as Login
+import Edit.View as Edit
 import Html exposing (..)
 import Html.Attributes exposing (..)
 import Html.CssHelpers
@@ -23,6 +24,9 @@ page model =
 
         PostRoute id ->
             Html.map ArticleMsg (Article.view model.articleModel)
+
+        EditRoute id ->
+            Html.map EditMsg (Edit.view model.editModel model.context)
 
         _ ->
             div [] [ text "Route not found." ]

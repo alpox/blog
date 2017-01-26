@@ -1,12 +1,13 @@
 module Login.Style exposing (..)
 
 import Css exposing (..)
-import Css.Elements exposing (input, button)
+import Css.Elements exposing (input, button, th, tr, td)
 import Css.Namespace exposing (namespace)
 
 
 type CssClasses
     = Container
+    | PostTable
 
 
 white : Color
@@ -41,6 +42,26 @@ css =
                     , fontWeight bold
                     , hover
                         [ boxShadow4 (px 1) (px 1) (px 10) (hex "AAA")
+                        ]
+                    ]
+                ]
+            ]
+        , (.) PostTable
+            [ property "border-collapse" "collapse"
+            , descendants
+                [ th
+                    [ cursor pointer
+                    , property "user-select" "none"
+                    ]
+                , tr [ hover [ backgroundColor (hex "ccc") ] ]
+                , td
+                    [ padding2 (px 4) (px 16)
+                    , firstChild
+                        [ children
+                            [ selector "i"
+                                [ cursor pointer
+                                ]
+                            ]
                         ]
                     ]
                 ]

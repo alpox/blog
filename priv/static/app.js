@@ -9079,6 +9079,10 @@ var _elm_lang$html$Html_Events$Options = F2(
 		return {stopPropagation: a, preventDefault: b};
 	});
 
+var _elm_lang$html$Html_Keyed$node = _elm_lang$virtual_dom$VirtualDom$keyedNode;
+var _elm_lang$html$Html_Keyed$ol = _elm_lang$html$Html_Keyed$node('ol');
+var _elm_lang$html$Html_Keyed$ul = _elm_lang$html$Html_Keyed$node('ul');
+
 var _elm_lang$html$Html_Lazy$lazy3 = _elm_lang$virtual_dom$VirtualDom$lazy3;
 var _elm_lang$html$Html_Lazy$lazy2 = _elm_lang$virtual_dom$VirtualDom$lazy2;
 var _elm_lang$html$Html_Lazy$lazy = _elm_lang$virtual_dom$VirtualDom$lazy;
@@ -9984,6 +9988,480 @@ var _evancz$elm_markdown$Markdown$Options = F4(
 	function (a, b, c, d) {
 		return {githubFlavored: a, defaultHighlighting: b, sanitize: c, smartypants: d};
 	});
+
+var _evancz$elm_sortable_table$Table$findSorter = F2(
+	function (selectedColumn, columnData) {
+		findSorter:
+		while (true) {
+			var _p0 = columnData;
+			if (_p0.ctor === '[]') {
+				return _elm_lang$core$Maybe$Nothing;
+			} else {
+				if (_elm_lang$core$Native_Utils.eq(_p0._0.name, selectedColumn)) {
+					return _elm_lang$core$Maybe$Just(_p0._0.sorter);
+				} else {
+					var _v1 = selectedColumn,
+						_v2 = _p0._1;
+					selectedColumn = _v1;
+					columnData = _v2;
+					continue findSorter;
+				}
+			}
+		}
+	});
+var _evancz$elm_sortable_table$Table$applySorter = F3(
+	function (isReversed, sorter, data) {
+		var _p1 = sorter;
+		switch (_p1.ctor) {
+			case 'None':
+				return data;
+			case 'Increasing':
+				return _p1._0(data);
+			case 'Decreasing':
+				return _elm_lang$core$List$reverse(
+					_p1._0(data));
+			case 'IncOrDec':
+				var _p2 = _p1._0;
+				return isReversed ? _elm_lang$core$List$reverse(
+					_p2(data)) : _p2(data);
+			default:
+				var _p3 = _p1._0;
+				return isReversed ? _p3(data) : _elm_lang$core$List$reverse(
+					_p3(data));
+		}
+	});
+var _evancz$elm_sortable_table$Table$sort = F3(
+	function (_p4, columnData, data) {
+		var _p5 = _p4;
+		var _p6 = A2(_evancz$elm_sortable_table$Table$findSorter, _p5._0, columnData);
+		if (_p6.ctor === 'Nothing') {
+			return data;
+		} else {
+			return A3(_evancz$elm_sortable_table$Table$applySorter, _p5._1, _p6._0, data);
+		}
+	});
+var _evancz$elm_sortable_table$Table$viewCell = F2(
+	function (data, _p7) {
+		var _p8 = _p7;
+		var details = _p8.viewData(data);
+		return A2(_elm_lang$html$Html$td, details.attributes, details.children);
+	});
+var _evancz$elm_sortable_table$Table$viewRowHelp = F3(
+	function (columns, toRowAttrs, data) {
+		return A2(
+			_elm_lang$html$Html$tr,
+			toRowAttrs(data),
+			A2(
+				_elm_lang$core$List$map,
+				_evancz$elm_sortable_table$Table$viewCell(data),
+				columns));
+	});
+var _evancz$elm_sortable_table$Table$viewRow = F4(
+	function (toId, columns, toRowAttrs, data) {
+		return {
+			ctor: '_Tuple2',
+			_0: toId(data),
+			_1: A4(_elm_lang$html$Html_Lazy$lazy3, _evancz$elm_sortable_table$Table$viewRowHelp, columns, toRowAttrs, data)
+		};
+	});
+var _evancz$elm_sortable_table$Table$simpleRowAttrs = function (_p9) {
+	return {ctor: '[]'};
+};
+var _evancz$elm_sortable_table$Table$lightGrey = function (symbol) {
+	return A2(
+		_elm_lang$html$Html$span,
+		{
+			ctor: '::',
+			_0: _elm_lang$html$Html_Attributes$style(
+				{
+					ctor: '::',
+					_0: {ctor: '_Tuple2', _0: 'color', _1: '#ccc'},
+					_1: {ctor: '[]'}
+				}),
+			_1: {ctor: '[]'}
+		},
+		{
+			ctor: '::',
+			_0: _elm_lang$html$Html$text(
+				A2(_elm_lang$core$Basics_ops['++'], ' ', symbol)),
+			_1: {ctor: '[]'}
+		});
+};
+var _evancz$elm_sortable_table$Table$darkGrey = function (symbol) {
+	return A2(
+		_elm_lang$html$Html$span,
+		{
+			ctor: '::',
+			_0: _elm_lang$html$Html_Attributes$style(
+				{
+					ctor: '::',
+					_0: {ctor: '_Tuple2', _0: 'color', _1: '#555'},
+					_1: {ctor: '[]'}
+				}),
+			_1: {ctor: '[]'}
+		},
+		{
+			ctor: '::',
+			_0: _elm_lang$html$Html$text(
+				A2(_elm_lang$core$Basics_ops['++'], ' ', symbol)),
+			_1: {ctor: '[]'}
+		});
+};
+var _evancz$elm_sortable_table$Table$simpleTheadHelp = function (_p10) {
+	var _p11 = _p10;
+	var _p13 = _p11._0;
+	var content = function () {
+		var _p12 = _p11._1;
+		switch (_p12.ctor) {
+			case 'Unsortable':
+				return {
+					ctor: '::',
+					_0: _elm_lang$html$Html$text(_p13),
+					_1: {ctor: '[]'}
+				};
+			case 'Sortable':
+				return {
+					ctor: '::',
+					_0: _elm_lang$html$Html$text(_p13),
+					_1: {
+						ctor: '::',
+						_0: _p12._0 ? _evancz$elm_sortable_table$Table$darkGrey('↓') : _evancz$elm_sortable_table$Table$lightGrey('↓'),
+						_1: {ctor: '[]'}
+					}
+				};
+			default:
+				if (_p12._0.ctor === 'Nothing') {
+					return {
+						ctor: '::',
+						_0: _elm_lang$html$Html$text(_p13),
+						_1: {
+							ctor: '::',
+							_0: _evancz$elm_sortable_table$Table$lightGrey('↕'),
+							_1: {ctor: '[]'}
+						}
+					};
+				} else {
+					return {
+						ctor: '::',
+						_0: _elm_lang$html$Html$text(_p13),
+						_1: {
+							ctor: '::',
+							_0: _evancz$elm_sortable_table$Table$darkGrey(
+								_p12._0._0 ? '↑' : '↓'),
+							_1: {ctor: '[]'}
+						}
+					};
+				}
+		}
+	}();
+	return A2(
+		_elm_lang$html$Html$th,
+		{
+			ctor: '::',
+			_0: _p11._2,
+			_1: {ctor: '[]'}
+		},
+		content);
+};
+var _evancz$elm_sortable_table$Table$Customizations = F6(
+	function (a, b, c, d, e, f) {
+		return {tableAttrs: a, caption: b, thead: c, tfoot: d, tbodyAttrs: e, rowAttrs: f};
+	});
+var _evancz$elm_sortable_table$Table$HtmlDetails = F2(
+	function (a, b) {
+		return {attributes: a, children: b};
+	});
+var _evancz$elm_sortable_table$Table$simpleThead = function (headers) {
+	return A2(
+		_evancz$elm_sortable_table$Table$HtmlDetails,
+		{ctor: '[]'},
+		A2(_elm_lang$core$List$map, _evancz$elm_sortable_table$Table$simpleTheadHelp, headers));
+};
+var _evancz$elm_sortable_table$Table$defaultCustomizations = {
+	tableAttrs: {ctor: '[]'},
+	caption: _elm_lang$core$Maybe$Nothing,
+	thead: _evancz$elm_sortable_table$Table$simpleThead,
+	tfoot: _elm_lang$core$Maybe$Nothing,
+	tbodyAttrs: {ctor: '[]'},
+	rowAttrs: _evancz$elm_sortable_table$Table$simpleRowAttrs
+};
+var _evancz$elm_sortable_table$Table$textDetails = function (str) {
+	return A2(
+		_evancz$elm_sortable_table$Table$HtmlDetails,
+		{ctor: '[]'},
+		{
+			ctor: '::',
+			_0: _elm_lang$html$Html$text(str),
+			_1: {ctor: '[]'}
+		});
+};
+var _evancz$elm_sortable_table$Table$ColumnData = F3(
+	function (a, b, c) {
+		return {name: a, viewData: b, sorter: c};
+	});
+var _evancz$elm_sortable_table$Table$State = F2(
+	function (a, b) {
+		return {ctor: 'State', _0: a, _1: b};
+	});
+var _evancz$elm_sortable_table$Table$initialSort = function (header) {
+	return A2(_evancz$elm_sortable_table$Table$State, header, false);
+};
+var _evancz$elm_sortable_table$Table$onClick = F3(
+	function (name, isReversed, toMsg) {
+		return A2(
+			_elm_lang$html$Html_Events$on,
+			'click',
+			A2(
+				_elm_lang$core$Json_Decode$map,
+				toMsg,
+				A3(
+					_elm_lang$core$Json_Decode$map2,
+					_evancz$elm_sortable_table$Table$State,
+					_elm_lang$core$Json_Decode$succeed(name),
+					_elm_lang$core$Json_Decode$succeed(isReversed))));
+	});
+var _evancz$elm_sortable_table$Table$Config = function (a) {
+	return {ctor: 'Config', _0: a};
+};
+var _evancz$elm_sortable_table$Table$config = function (_p14) {
+	var _p15 = _p14;
+	return _evancz$elm_sortable_table$Table$Config(
+		{
+			toId: _p15.toId,
+			toMsg: _p15.toMsg,
+			columns: A2(
+				_elm_lang$core$List$map,
+				function (_p16) {
+					var _p17 = _p16;
+					return _p17._0;
+				},
+				_p15.columns),
+			customizations: _evancz$elm_sortable_table$Table$defaultCustomizations
+		});
+};
+var _evancz$elm_sortable_table$Table$customConfig = function (_p18) {
+	var _p19 = _p18;
+	return _evancz$elm_sortable_table$Table$Config(
+		{
+			toId: _p19.toId,
+			toMsg: _p19.toMsg,
+			columns: A2(
+				_elm_lang$core$List$map,
+				function (_p20) {
+					var _p21 = _p20;
+					return _p21._0;
+				},
+				_p19.columns),
+			customizations: _p19.customizations
+		});
+};
+var _evancz$elm_sortable_table$Table$Reversible = function (a) {
+	return {ctor: 'Reversible', _0: a};
+};
+var _evancz$elm_sortable_table$Table$Sortable = function (a) {
+	return {ctor: 'Sortable', _0: a};
+};
+var _evancz$elm_sortable_table$Table$Unsortable = {ctor: 'Unsortable'};
+var _evancz$elm_sortable_table$Table$toHeaderInfo = F3(
+	function (_p23, toMsg, _p22) {
+		var _p24 = _p23;
+		var _p29 = _p24._0;
+		var _p28 = _p24._1;
+		var _p25 = _p22;
+		var _p27 = _p25.name;
+		var _p26 = _p25.sorter;
+		switch (_p26.ctor) {
+			case 'None':
+				return {
+					ctor: '_Tuple3',
+					_0: _p27,
+					_1: _evancz$elm_sortable_table$Table$Unsortable,
+					_2: A3(_evancz$elm_sortable_table$Table$onClick, _p29, _p28, toMsg)
+				};
+			case 'Increasing':
+				return {
+					ctor: '_Tuple3',
+					_0: _p27,
+					_1: _evancz$elm_sortable_table$Table$Sortable(
+						_elm_lang$core$Native_Utils.eq(_p27, _p29)),
+					_2: A3(_evancz$elm_sortable_table$Table$onClick, _p27, false, toMsg)
+				};
+			case 'Decreasing':
+				return {
+					ctor: '_Tuple3',
+					_0: _p27,
+					_1: _evancz$elm_sortable_table$Table$Sortable(
+						_elm_lang$core$Native_Utils.eq(_p27, _p29)),
+					_2: A3(_evancz$elm_sortable_table$Table$onClick, _p27, false, toMsg)
+				};
+			case 'IncOrDec':
+				return _elm_lang$core$Native_Utils.eq(_p27, _p29) ? {
+					ctor: '_Tuple3',
+					_0: _p27,
+					_1: _evancz$elm_sortable_table$Table$Reversible(
+						_elm_lang$core$Maybe$Just(_p28)),
+					_2: A3(_evancz$elm_sortable_table$Table$onClick, _p27, !_p28, toMsg)
+				} : {
+					ctor: '_Tuple3',
+					_0: _p27,
+					_1: _evancz$elm_sortable_table$Table$Reversible(_elm_lang$core$Maybe$Nothing),
+					_2: A3(_evancz$elm_sortable_table$Table$onClick, _p27, false, toMsg)
+				};
+			default:
+				return _elm_lang$core$Native_Utils.eq(_p27, _p29) ? {
+					ctor: '_Tuple3',
+					_0: _p27,
+					_1: _evancz$elm_sortable_table$Table$Reversible(
+						_elm_lang$core$Maybe$Just(_p28)),
+					_2: A3(_evancz$elm_sortable_table$Table$onClick, _p27, !_p28, toMsg)
+				} : {
+					ctor: '_Tuple3',
+					_0: _p27,
+					_1: _evancz$elm_sortable_table$Table$Reversible(_elm_lang$core$Maybe$Nothing),
+					_2: A3(_evancz$elm_sortable_table$Table$onClick, _p27, false, toMsg)
+				};
+		}
+	});
+var _evancz$elm_sortable_table$Table$view = F3(
+	function (_p30, state, data) {
+		var _p31 = _p30;
+		var _p35 = _p31._0.customizations;
+		var _p34 = _p31._0.columns;
+		var theadDetails = _p35.thead(
+			A2(
+				_elm_lang$core$List$map,
+				A2(_evancz$elm_sortable_table$Table$toHeaderInfo, state, _p31._0.toMsg),
+				_p34));
+		var thead = A2(_elm_lang$html$Html$thead, theadDetails.attributes, theadDetails.children);
+		var sortedData = A3(_evancz$elm_sortable_table$Table$sort, state, _p34, data);
+		var tbody = A3(
+			_elm_lang$html$Html_Keyed$node,
+			'tbody',
+			_p35.tbodyAttrs,
+			A2(
+				_elm_lang$core$List$map,
+				A3(_evancz$elm_sortable_table$Table$viewRow, _p31._0.toId, _p34, _p35.rowAttrs),
+				sortedData));
+		var withFoot = function () {
+			var _p32 = _p35.tfoot;
+			if (_p32.ctor === 'Nothing') {
+				return {
+					ctor: '::',
+					_0: tbody,
+					_1: {ctor: '[]'}
+				};
+			} else {
+				return {
+					ctor: '::',
+					_0: A2(_elm_lang$html$Html$tfoot, _p32._0.attributes, _p32._0.children),
+					_1: {
+						ctor: '::',
+						_0: tbody,
+						_1: {ctor: '[]'}
+					}
+				};
+			}
+		}();
+		return A2(
+			_elm_lang$html$Html$table,
+			_p35.tableAttrs,
+			function () {
+				var _p33 = _p35.caption;
+				if (_p33.ctor === 'Nothing') {
+					return {ctor: '::', _0: thead, _1: withFoot};
+				} else {
+					return {
+						ctor: '::',
+						_0: A2(_elm_lang$html$Html$caption, _p33._0.attributes, _p33._0.children),
+						_1: {ctor: '::', _0: thead, _1: withFoot}
+					};
+				}
+			}());
+	});
+var _evancz$elm_sortable_table$Table$Column = function (a) {
+	return {ctor: 'Column', _0: a};
+};
+var _evancz$elm_sortable_table$Table$customColumn = function (_p36) {
+	var _p37 = _p36;
+	return _evancz$elm_sortable_table$Table$Column(
+		A3(
+			_evancz$elm_sortable_table$Table$ColumnData,
+			_p37.name,
+			function (_p38) {
+				return _evancz$elm_sortable_table$Table$textDetails(
+					_p37.viewData(_p38));
+			},
+			_p37.sorter));
+};
+var _evancz$elm_sortable_table$Table$veryCustomColumn = _evancz$elm_sortable_table$Table$Column;
+var _evancz$elm_sortable_table$Table$DecOrInc = function (a) {
+	return {ctor: 'DecOrInc', _0: a};
+};
+var _evancz$elm_sortable_table$Table$decreasingOrIncreasingBy = function (toComparable) {
+	return _evancz$elm_sortable_table$Table$DecOrInc(
+		_elm_lang$core$List$sortBy(toComparable));
+};
+var _evancz$elm_sortable_table$Table$IncOrDec = function (a) {
+	return {ctor: 'IncOrDec', _0: a};
+};
+var _evancz$elm_sortable_table$Table$increasingOrDecreasingBy = function (toComparable) {
+	return _evancz$elm_sortable_table$Table$IncOrDec(
+		_elm_lang$core$List$sortBy(toComparable));
+};
+var _evancz$elm_sortable_table$Table$stringColumn = F2(
+	function (name, toStr) {
+		return _evancz$elm_sortable_table$Table$Column(
+			{
+				name: name,
+				viewData: function (_p39) {
+					return _evancz$elm_sortable_table$Table$textDetails(
+						toStr(_p39));
+				},
+				sorter: _evancz$elm_sortable_table$Table$increasingOrDecreasingBy(toStr)
+			});
+	});
+var _evancz$elm_sortable_table$Table$intColumn = F2(
+	function (name, toInt) {
+		return _evancz$elm_sortable_table$Table$Column(
+			{
+				name: name,
+				viewData: function (_p40) {
+					return _evancz$elm_sortable_table$Table$textDetails(
+						_elm_lang$core$Basics$toString(
+							toInt(_p40)));
+				},
+				sorter: _evancz$elm_sortable_table$Table$increasingOrDecreasingBy(toInt)
+			});
+	});
+var _evancz$elm_sortable_table$Table$floatColumn = F2(
+	function (name, toFloat) {
+		return _evancz$elm_sortable_table$Table$Column(
+			{
+				name: name,
+				viewData: function (_p41) {
+					return _evancz$elm_sortable_table$Table$textDetails(
+						_elm_lang$core$Basics$toString(
+							toFloat(_p41)));
+				},
+				sorter: _evancz$elm_sortable_table$Table$increasingOrDecreasingBy(toFloat)
+			});
+	});
+var _evancz$elm_sortable_table$Table$Decreasing = function (a) {
+	return {ctor: 'Decreasing', _0: a};
+};
+var _evancz$elm_sortable_table$Table$decreasingBy = function (toComparable) {
+	return _evancz$elm_sortable_table$Table$Decreasing(
+		_elm_lang$core$List$sortBy(toComparable));
+};
+var _evancz$elm_sortable_table$Table$Increasing = function (a) {
+	return {ctor: 'Increasing', _0: a};
+};
+var _evancz$elm_sortable_table$Table$increasingBy = function (toComparable) {
+	return _evancz$elm_sortable_table$Table$Increasing(
+		_elm_lang$core$List$sortBy(toComparable));
+};
+var _evancz$elm_sortable_table$Table$None = {ctor: 'None'};
+var _evancz$elm_sortable_table$Table$unsortable = _evancz$elm_sortable_table$Table$None;
 
 var _evancz$url_parser$UrlParser$toKeyValuePair = function (segment) {
 	var _p0 = A2(_elm_lang$core$String$split, '=', segment);
@@ -15006,11 +15484,26 @@ var _rtfeldman$elm_css_helpers$Html_CssHelpers$Namespace = F4(
 		return {$class: a, classList: b, id: c, name: d};
 	});
 
-var _user$project$Article_Types$initialModel = {post: _elm_lang$core$Maybe$Nothing, error: _elm_lang$core$Maybe$Nothing};
-var _user$project$Article_Types$Post = F4(
+var _user$project$Shared_Types$initialContext = {jwtToken: _elm_lang$core$Maybe$Nothing};
+var _user$project$Shared_Types$initialPost = {id: '', title: '', content: '', summary: ''};
+var _user$project$Shared_Types$Post = F4(
 	function (a, b, c, d) {
 		return {id: a, title: b, content: c, summary: d};
 	});
+var _user$project$Shared_Types$Context = function (a) {
+	return {jwtToken: a};
+};
+var _user$project$Shared_Types$Error = function (a) {
+	return {ctor: 'Error', _0: a};
+};
+var _user$project$Shared_Types$Warn = function (a) {
+	return {ctor: 'Warn', _0: a};
+};
+var _user$project$Shared_Types$Info = function (a) {
+	return {ctor: 'Info', _0: a};
+};
+
+var _user$project$Article_Types$initialModel = {post: _elm_lang$core$Maybe$Nothing, error: _elm_lang$core$Maybe$Nothing};
 var _user$project$Article_Types$Model = F2(
 	function (a, b) {
 		return {post: a, error: b};
@@ -15031,27 +15524,28 @@ var _user$project$Dashboard_Types$Retrieve = function (a) {
 	return {ctor: 'Retrieve', _0: a};
 };
 
-var _user$project$Shared_Types$Context = function (a) {
-	return {jwtToken: a};
-};
-var _user$project$Shared_Types$Error = function (a) {
-	return {ctor: 'Error', _0: a};
-};
-var _user$project$Shared_Types$Warn = function (a) {
-	return {ctor: 'Warn', _0: a};
-};
-var _user$project$Shared_Types$Info = function (a) {
-	return {ctor: 'Info', _0: a};
-};
-
 var _user$project$Login_Types$initialLoginCredentials = {username: '', password: ''};
-var _user$project$Login_Types$initialModel = {loginCredentials: _user$project$Login_Types$initialLoginCredentials};
+var _user$project$Login_Types$initialModel = {
+	loginCredentials: _user$project$Login_Types$initialLoginCredentials,
+	postTableState: _evancz$elm_sortable_table$Table$initialSort('Title'),
+	posts: {ctor: '[]'}
+};
 var _user$project$Login_Types$LoginCredentials = F2(
 	function (a, b) {
 		return {username: a, password: b};
 	});
-var _user$project$Login_Types$Model = function (a) {
-	return {loginCredentials: a};
+var _user$project$Login_Types$Model = F3(
+	function (a, b, c) {
+		return {loginCredentials: a, postTableState: b, posts: c};
+	});
+var _user$project$Login_Types$StartEdit = function (a) {
+	return {ctor: 'StartEdit', _0: a};
+};
+var _user$project$Login_Types$Retrieve = function (a) {
+	return {ctor: 'Retrieve', _0: a};
+};
+var _user$project$Login_Types$SetPostTableState = function (a) {
+	return {ctor: 'SetPostTableState', _0: a};
 };
 var _user$project$Login_Types$PasswordChange = function (a) {
 	return {ctor: 'PasswordChange', _0: a};
@@ -15063,6 +15557,9 @@ var _user$project$Login_Types$Login = {ctor: 'Login'};
 var _user$project$Login_Types$LoginResponse = function (a) {
 	return {ctor: 'LoginResponse', _0: a};
 };
+var _user$project$Login_Types$UrlChangeRequest = function (a) {
+	return {ctor: 'UrlChangeRequest', _0: a};
+};
 var _user$project$Login_Types$Token = function (a) {
 	return {ctor: 'Token', _0: a};
 };
@@ -15070,7 +15567,17 @@ var _user$project$Login_Types$Flash = function (a) {
 	return {ctor: 'Flash', _0: a};
 };
 
-var _user$project$App_Types$initialContext = {jwtToken: _elm_lang$core$Maybe$Nothing};
+var _user$project$Edit_Types$initialModel = {post: _user$project$Shared_Types$initialPost};
+var _user$project$Edit_Types$Model = function (a) {
+	return {post: a};
+};
+var _user$project$Edit_Types$Retrieve = function (a) {
+	return {ctor: 'Retrieve', _0: a};
+};
+var _user$project$Edit_Types$Flash = function (a) {
+	return {ctor: 'Flash', _0: a};
+};
+
 var _user$project$App_Types$initialModel = function (route) {
 	return {
 		route: route,
@@ -15078,16 +15585,20 @@ var _user$project$App_Types$initialModel = function (route) {
 		articleModel: _user$project$Article_Types$initialModel,
 		dashboardModel: _user$project$Dashboard_Types$initialModel,
 		loginModel: _user$project$Login_Types$initialModel,
-		context: _user$project$App_Types$initialContext
+		editModel: _user$project$Edit_Types$initialModel,
+		context: _user$project$Shared_Types$initialContext
 	};
 };
-var _user$project$App_Types$Model = F6(
-	function (a, b, c, d, e, f) {
-		return {route: a, flashMessages: b, articleModel: c, dashboardModel: d, loginModel: e, context: f};
+var _user$project$App_Types$Model = F7(
+	function (a, b, c, d, e, f, g) {
+		return {route: a, flashMessages: b, articleModel: c, dashboardModel: d, loginModel: e, editModel: f, context: g};
 	});
 var _user$project$App_Types$NoOp = {ctor: 'NoOp'};
 var _user$project$App_Types$SetContext = function (a) {
 	return {ctor: 'SetContext', _0: a};
+};
+var _user$project$App_Types$EditMsg = function (a) {
+	return {ctor: 'EditMsg', _0: a};
 };
 var _user$project$App_Types$LoginMsg = function (a) {
 	return {ctor: 'LoginMsg', _0: a};
@@ -15106,6 +15617,9 @@ var _user$project$App_Types$UrlChange = function (a) {
 };
 var _user$project$App_Types$NotFoundRoute = {ctor: 'NotFoundRoute'};
 var _user$project$App_Types$LoginRoute = {ctor: 'LoginRoute'};
+var _user$project$App_Types$EditRoute = function (a) {
+	return {ctor: 'EditRoute', _0: a};
+};
 var _user$project$App_Types$PostRoute = function (a) {
 	return {ctor: 'PostRoute', _0: a};
 };
@@ -15134,9 +15648,19 @@ var _user$project$App_Routes$matchers = _evancz$url_parser$UrlParser$oneOf(
 					ctor: '::',
 					_0: A2(
 						_evancz$url_parser$UrlParser$map,
-						_user$project$App_Types$LoginRoute,
-						_evancz$url_parser$UrlParser$s('login')),
-					_1: {ctor: '[]'}
+						_user$project$App_Types$EditRoute,
+						A2(
+							_evancz$url_parser$UrlParser_ops['</>'],
+							_evancz$url_parser$UrlParser$s('edit'),
+							_evancz$url_parser$UrlParser$string)),
+					_1: {
+						ctor: '::',
+						_0: A2(
+							_evancz$url_parser$UrlParser$map,
+							_user$project$App_Types$LoginRoute,
+							_evancz$url_parser$UrlParser$s('login')),
+						_1: {ctor: '[]'}
+					}
 				}
 			}
 		}
@@ -15149,6 +15673,60 @@ var _user$project$App_Routes$parseLocation = function (location) {
 		return _user$project$App_Types$NotFoundRoute;
 	}
 };
+
+var _user$project$Dashboard_State$update = F2(
+	function (msg, model) {
+		var _p0 = msg;
+		if (_p0._0.ctor === 'Ok') {
+			return {
+				ctor: '_Tuple2',
+				_0: _elm_lang$core$Native_Utils.update(
+					model,
+					{posts: _p0._0._0}),
+				_1: _elm_lang$core$Platform_Cmd$none
+			};
+		} else {
+			return {
+				ctor: '_Tuple2',
+				_0: _elm_lang$core$Native_Utils.update(
+					model,
+					{
+						posts: {ctor: '[]'},
+						error: _elm_lang$core$Maybe$Just(
+							A2(_elm_lang$core$Debug$log, 'Error: ', _p0._0._0))
+					}),
+				_1: _elm_lang$core$Platform_Cmd$none
+			};
+		}
+	});
+
+var _user$project$Article_State$update = F2(
+	function (msg, model) {
+		var _p0 = msg;
+		if (_p0._0.ctor === 'Ok') {
+			return {
+				ctor: '_Tuple2',
+				_0: _elm_lang$core$Native_Utils.update(
+					model,
+					{
+						post: _elm_lang$core$Maybe$Just(_p0._0._0)
+					}),
+				_1: _elm_lang$core$Platform_Cmd$none
+			};
+		} else {
+			return {
+				ctor: '_Tuple2',
+				_0: _elm_lang$core$Native_Utils.update(
+					model,
+					{
+						post: _elm_lang$core$Maybe$Nothing,
+						error: _elm_lang$core$Maybe$Just(
+							A2(_elm_lang$core$Debug$log, 'Error: ', _p0._0._0))
+					}),
+				_1: _elm_lang$core$Platform_Cmd$none
+			};
+		}
+	});
 
 var _user$project$Util_Graphql$queryDecoder = function (decoder) {
 	return A2(
@@ -15212,133 +15790,6 @@ var _user$project$Util_Graphql$query = function (queryString) {
 var _user$project$Util_Graphql$Query = F2(
 	function (a, b) {
 		return {query: a, variables: b};
-	});
-
-var _user$project$Article_Rest$postDecoder = A2(
-	_elm_lang$core$Json_Decode$at,
-	{
-		ctor: '::',
-		_0: 'post',
-		_1: {ctor: '[]'}
-	},
-	A4(
-		_NoRedInk$elm_decode_pipeline$Json_Decode_Pipeline$optional,
-		'summary',
-		_elm_lang$core$Json_Decode$string,
-		'',
-		A3(
-			_NoRedInk$elm_decode_pipeline$Json_Decode_Pipeline$required,
-			'content',
-			_elm_lang$core$Json_Decode$string,
-			A3(
-				_NoRedInk$elm_decode_pipeline$Json_Decode_Pipeline$required,
-				'title',
-				_elm_lang$core$Json_Decode$string,
-				A4(
-					_NoRedInk$elm_decode_pipeline$Json_Decode_Pipeline$optional,
-					'id',
-					_elm_lang$core$Json_Decode$string,
-					'0',
-					_NoRedInk$elm_decode_pipeline$Json_Decode_Pipeline$decode(_user$project$Article_Types$Post))))));
-var _user$project$Article_Rest$fetch = function (id) {
-	return A3(
-		_user$project$Util_Graphql$send,
-		_user$project$Article_Types$Retrieve,
-		_user$project$Article_Rest$postDecoder,
-		A2(
-			_user$project$Util_Graphql$withVariable,
-			{
-				ctor: '_Tuple2',
-				_0: 'id',
-				_1: _elm_lang$core$Json_Encode$string(id)
-			},
-			_user$project$Util_Graphql$query('\n    query($id: ID!) {\n        post(id: $id) {\n            id\n            title\n            content\n            summary\n        }\n    }\n    ')));
-};
-
-var _user$project$Article_State$update = F2(
-	function (msg, model) {
-		var _p0 = msg;
-		if (_p0._0.ctor === 'Ok') {
-			return {
-				ctor: '_Tuple2',
-				_0: _elm_lang$core$Native_Utils.update(
-					model,
-					{
-						post: _elm_lang$core$Maybe$Just(_p0._0._0)
-					}),
-				_1: _elm_lang$core$Platform_Cmd$none
-			};
-		} else {
-			return {
-				ctor: '_Tuple2',
-				_0: _elm_lang$core$Native_Utils.update(
-					model,
-					{
-						post: _elm_lang$core$Maybe$Nothing,
-						error: _elm_lang$core$Maybe$Just(
-							A2(_elm_lang$core$Debug$log, 'Error: ', _p0._0._0))
-					}),
-				_1: _elm_lang$core$Platform_Cmd$none
-			};
-		}
-	});
-
-var _user$project$Dashboard_Rest$postDecoder = A2(
-	_elm_lang$core$Json_Decode$at,
-	{
-		ctor: '::',
-		_0: 'posts',
-		_1: {ctor: '[]'}
-	},
-	_elm_lang$core$Json_Decode$list(
-		A3(
-			_NoRedInk$elm_decode_pipeline$Json_Decode_Pipeline$required,
-			'summary',
-			_elm_lang$core$Json_Decode$string,
-			A4(
-				_NoRedInk$elm_decode_pipeline$Json_Decode_Pipeline$optional,
-				'content',
-				_elm_lang$core$Json_Decode$string,
-				'',
-				A3(
-					_NoRedInk$elm_decode_pipeline$Json_Decode_Pipeline$required,
-					'title',
-					_elm_lang$core$Json_Decode$string,
-					A3(
-						_NoRedInk$elm_decode_pipeline$Json_Decode_Pipeline$required,
-						'id',
-						_elm_lang$core$Json_Decode$string,
-						_NoRedInk$elm_decode_pipeline$Json_Decode_Pipeline$decode(_user$project$Article_Types$Post)))))));
-var _user$project$Dashboard_Rest$fetch = A3(
-	_user$project$Util_Graphql$send,
-	_user$project$Dashboard_Types$Retrieve,
-	_user$project$Dashboard_Rest$postDecoder,
-	_user$project$Util_Graphql$query('\n    {\n        posts {\n            id\n            title\n            summary\n        }\n    }\n    '));
-
-var _user$project$Dashboard_State$update = F2(
-	function (msg, model) {
-		var _p0 = msg;
-		if (_p0._0.ctor === 'Ok') {
-			return {
-				ctor: '_Tuple2',
-				_0: _elm_lang$core$Native_Utils.update(
-					model,
-					{posts: _p0._0._0}),
-				_1: _elm_lang$core$Platform_Cmd$none
-			};
-		} else {
-			return {
-				ctor: '_Tuple2',
-				_0: _elm_lang$core$Native_Utils.update(
-					model,
-					{
-						posts: {ctor: '[]'},
-						error: _elm_lang$core$Maybe$Just(
-							A2(_elm_lang$core$Debug$log, 'Error: ', _p0._0._0))
-					}),
-				_1: _elm_lang$core$Platform_Cmd$none
-			};
-		}
 	});
 
 var _user$project$Login_Rest$decoder = A2(
@@ -15421,7 +15872,7 @@ var _user$project$Login_State$update = F2(
 					_1: A2(_user$project$Login_Rest$login, model.loginCredentials.username, model.loginCredentials.password),
 					_2: _elm_lang$core$Maybe$Nothing
 				};
-			default:
+			case 'LoginResponse':
 				if (_p0._0.ctor === 'Ok') {
 					return {
 						ctor: '_Tuple3',
@@ -15440,8 +15891,145 @@ var _user$project$Login_State$update = F2(
 								_user$project$Shared_Types$Error('Incorrect login credentials!')))
 					};
 				}
+			case 'Retrieve':
+				if (_p0._0.ctor === 'Ok') {
+					return {
+						ctor: '_Tuple3',
+						_0: _elm_lang$core$Native_Utils.update(
+							model,
+							{posts: _p0._0._0}),
+						_1: _elm_lang$core$Platform_Cmd$none,
+						_2: _elm_lang$core$Maybe$Nothing
+					};
+				} else {
+					return {
+						ctor: '_Tuple3',
+						_0: model,
+						_1: _elm_lang$core$Platform_Cmd$none,
+						_2: _elm_lang$core$Maybe$Just(
+							_user$project$Login_Types$Flash(
+								_user$project$Shared_Types$Error('Was not able to fetch posts')))
+					};
+				}
+			case 'SetPostTableState':
+				return {
+					ctor: '_Tuple3',
+					_0: _elm_lang$core$Native_Utils.update(
+						model,
+						{postTableState: _p0._0}),
+					_1: _elm_lang$core$Platform_Cmd$none,
+					_2: _elm_lang$core$Maybe$Nothing
+				};
+			default:
+				return {
+					ctor: '_Tuple3',
+					_0: model,
+					_1: _elm_lang$core$Platform_Cmd$none,
+					_2: _elm_lang$core$Maybe$Just(
+						_user$project$Login_Types$UrlChangeRequest(
+							A2(_elm_lang$core$Basics_ops['++'], '#/edit/', _p0._0.id)))
+				};
 		}
 	});
+
+var _user$project$Edit_State$update = F2(
+	function (msg, model) {
+		var _p0 = msg;
+		if (_p0._0.ctor === 'Ok') {
+			return {
+				ctor: '_Tuple3',
+				_0: _elm_lang$core$Native_Utils.update(
+					model,
+					{post: _p0._0._0}),
+				_1: _elm_lang$core$Platform_Cmd$none,
+				_2: _elm_lang$core$Maybe$Nothing
+			};
+		} else {
+			return {
+				ctor: '_Tuple3',
+				_0: model,
+				_1: _elm_lang$core$Platform_Cmd$none,
+				_2: _elm_lang$core$Maybe$Just(
+					_user$project$Edit_Types$Flash(
+						_user$project$Shared_Types$Error('Post not found')))
+			};
+		}
+	});
+
+var _user$project$Shared_Service$postsDecoder = A2(
+	_elm_lang$core$Json_Decode$at,
+	{
+		ctor: '::',
+		_0: 'posts',
+		_1: {ctor: '[]'}
+	},
+	_elm_lang$core$Json_Decode$list(
+		A3(
+			_NoRedInk$elm_decode_pipeline$Json_Decode_Pipeline$required,
+			'summary',
+			_elm_lang$core$Json_Decode$string,
+			A4(
+				_NoRedInk$elm_decode_pipeline$Json_Decode_Pipeline$optional,
+				'content',
+				_elm_lang$core$Json_Decode$string,
+				'',
+				A3(
+					_NoRedInk$elm_decode_pipeline$Json_Decode_Pipeline$required,
+					'title',
+					_elm_lang$core$Json_Decode$string,
+					A3(
+						_NoRedInk$elm_decode_pipeline$Json_Decode_Pipeline$required,
+						'id',
+						_elm_lang$core$Json_Decode$string,
+						_NoRedInk$elm_decode_pipeline$Json_Decode_Pipeline$decode(_user$project$Shared_Types$Post)))))));
+var _user$project$Shared_Service$postDecoder = A2(
+	_elm_lang$core$Json_Decode$at,
+	{
+		ctor: '::',
+		_0: 'post',
+		_1: {ctor: '[]'}
+	},
+	A4(
+		_NoRedInk$elm_decode_pipeline$Json_Decode_Pipeline$optional,
+		'summary',
+		_elm_lang$core$Json_Decode$string,
+		'',
+		A3(
+			_NoRedInk$elm_decode_pipeline$Json_Decode_Pipeline$required,
+			'content',
+			_elm_lang$core$Json_Decode$string,
+			A3(
+				_NoRedInk$elm_decode_pipeline$Json_Decode_Pipeline$required,
+				'title',
+				_elm_lang$core$Json_Decode$string,
+				A4(
+					_NoRedInk$elm_decode_pipeline$Json_Decode_Pipeline$optional,
+					'id',
+					_elm_lang$core$Json_Decode$string,
+					'0',
+					_NoRedInk$elm_decode_pipeline$Json_Decode_Pipeline$decode(_user$project$Shared_Types$Post))))));
+var _user$project$Shared_Service$fetchPost = F2(
+	function (id, messageType) {
+		return A3(
+			_user$project$Util_Graphql$send,
+			messageType,
+			_user$project$Shared_Service$postDecoder,
+			A2(
+				_user$project$Util_Graphql$withVariable,
+				{
+					ctor: '_Tuple2',
+					_0: 'id',
+					_1: _elm_lang$core$Json_Encode$string(id)
+				},
+				_user$project$Util_Graphql$query('\n    query($id: ID!) {\n        post(id: $id) {\n            id\n            title\n            content\n            summary\n        }\n    }\n    ')));
+	});
+var _user$project$Shared_Service$fetchPosts = function (messageType) {
+	return A3(
+		_user$project$Util_Graphql$send,
+		messageType,
+		_user$project$Shared_Service$postsDecoder,
+		_user$project$Util_Graphql$query('\n    {\n        posts {\n            id\n            title\n            summary\n        }\n    }\n    '));
+};
 
 var _user$project$App_State$showFlash = F2(
 	function (flashMsg, model) {
@@ -15465,6 +16053,16 @@ var _user$project$App_State$showFlash = F2(
 			_1: removeTask
 		};
 	});
+var _user$project$App_State$interpretEditMsg = F2(
+	function (msg, model) {
+		var _p1 = msg;
+		if (_p1.ctor === 'Nothing') {
+			return {ctor: '_Tuple2', _0: model, _1: _elm_lang$core$Platform_Cmd$none};
+		} else {
+			var _p2 = _p1._0;
+			return A2(_user$project$App_State$showFlash, _p2._0, model);
+		}
+	});
 var _user$project$App_State$decodeContext = _elm_lang$core$Json_Decode$decodeValue(
 	A2(
 		_elm_lang$core$Json_Decode$map,
@@ -15474,19 +16072,19 @@ var _user$project$App_State$decodeContext = _elm_lang$core$Json_Decode$decodeVal
 			'jwtToken',
 			_elm_lang$core$Json_Decode$nullable(_elm_lang$core$Json_Decode$string))));
 var _user$project$App_State$mapStorageInput = function (input) {
-	var _p1 = _user$project$App_State$decodeContext(input);
-	if (_p1.ctor === 'Ok') {
-		return _user$project$App_Types$SetContext(_p1._0);
+	var _p3 = _user$project$App_State$decodeContext(input);
+	if (_p3.ctor === 'Ok') {
+		return _user$project$App_Types$SetContext(_p3._0);
 	} else {
-		var _p2 = A2(_elm_lang$core$Debug$log, 'Error in mapStorageInput:', _p1._0);
+		var _p4 = A2(_elm_lang$core$Debug$log, 'Error in mapStorageInput:', _p3._0);
 		return _user$project$App_Types$NoOp;
 	}
 };
 var _user$project$App_State$encodeContext = function (context) {
 	var encodedToken = function () {
-		var _p3 = context.jwtToken;
-		if (_p3.ctor === 'Just') {
-			return _elm_lang$core$Json_Encode$string(_p3._0);
+		var _p5 = context.jwtToken;
+		if (_p5.ctor === 'Just') {
+			return _elm_lang$core$Json_Encode$string(_p5._0);
 		} else {
 			return _elm_lang$core$Json_Encode$null;
 		}
@@ -15528,37 +16126,47 @@ var _user$project$App_State$updateContextWithToken = F2(
 	});
 var _user$project$App_State$interpretLoginMsg = F2(
 	function (msg, model) {
-		var _p4 = msg;
-		if (_p4.ctor === 'Nothing') {
+		var _p6 = msg;
+		if (_p6.ctor === 'Nothing') {
 			return {ctor: '_Tuple2', _0: model, _1: _elm_lang$core$Platform_Cmd$none};
 		} else {
-			var _p5 = _p4._0;
-			if (_p5.ctor === 'Token') {
-				return A2(
-					_user$project$App_State$updateContextWithToken,
-					_elm_lang$core$Maybe$Just(_p5._0),
-					model);
-			} else {
-				return A2(_user$project$App_State$showFlash, _p5._0, model);
+			var _p7 = _p6._0;
+			switch (_p7.ctor) {
+				case 'Token':
+					return A2(
+						_user$project$App_State$updateContextWithToken,
+						_elm_lang$core$Maybe$Just(_p7._0),
+						model);
+				case 'Flash':
+					return A2(_user$project$App_State$showFlash, _p7._0, model);
+				default:
+					return {
+						ctor: '_Tuple2',
+						_0: model,
+						_1: _elm_lang$navigation$Navigation$newUrl(_p7._0)
+					};
 			}
 		}
 	});
 var _user$project$App_State$update = F2(
 	function (msg, model) {
-		var _p6 = msg;
-		switch (_p6.ctor) {
+		var _p8 = msg;
+		switch (_p8.ctor) {
 			case 'UrlChange':
-				var newRoute = _user$project$App_Routes$parseLocation(_p6._0);
+				var newRoute = _user$project$App_Routes$parseLocation(_p8._0);
 				var newModel = _elm_lang$core$Native_Utils.update(
 					model,
 					{route: newRoute});
-				var _p7 = newRoute;
-				switch (_p7.ctor) {
+				var _p9 = newRoute;
+				switch (_p9.ctor) {
 					case 'PostsRoute':
 						return {
 							ctor: '_Tuple2',
 							_0: newModel,
-							_1: A2(_elm_lang$core$Platform_Cmd$map, _user$project$App_Types$DashboardMsg, _user$project$Dashboard_Rest$fetch)
+							_1: A2(
+								_elm_lang$core$Platform_Cmd$map,
+								_user$project$App_Types$DashboardMsg,
+								_user$project$Shared_Service$fetchPosts(_user$project$Dashboard_Types$Retrieve))
 						};
 					case 'PostRoute':
 						return {
@@ -15567,15 +16175,33 @@ var _user$project$App_State$update = F2(
 							_1: A2(
 								_elm_lang$core$Platform_Cmd$map,
 								_user$project$App_Types$ArticleMsg,
-								_user$project$Article_Rest$fetch(_p7._0))
+								A2(_user$project$Shared_Service$fetchPost, _p9._0, _user$project$Article_Types$Retrieve))
+						};
+					case 'EditRoute':
+						return {
+							ctor: '_Tuple2',
+							_0: newModel,
+							_1: A2(
+								_elm_lang$core$Platform_Cmd$map,
+								_user$project$App_Types$EditMsg,
+								A2(_user$project$Shared_Service$fetchPost, _p9._0, _user$project$Edit_Types$Retrieve))
+						};
+					case 'LoginRoute':
+						return {
+							ctor: '_Tuple2',
+							_0: newModel,
+							_1: A2(
+								_elm_lang$core$Platform_Cmd$map,
+								_user$project$App_Types$LoginMsg,
+								_user$project$Shared_Service$fetchPosts(_user$project$Login_Types$Retrieve))
 						};
 					default:
 						return {ctor: '_Tuple2', _0: newModel, _1: _elm_lang$core$Platform_Cmd$none};
 				}
 			case 'ArticleMsg':
-				var _p8 = A2(_user$project$Article_State$update, _p6._0, model.articleModel);
-				var newModel = _p8._0;
-				var cmd = _p8._1;
+				var _p10 = A2(_user$project$Article_State$update, _p8._0, model.articleModel);
+				var newModel = _p10._0;
+				var cmd = _p10._1;
 				return {
 					ctor: '_Tuple2',
 					_0: _elm_lang$core$Native_Utils.update(
@@ -15584,9 +16210,9 @@ var _user$project$App_State$update = F2(
 					_1: _elm_lang$core$Platform_Cmd$none
 				};
 			case 'DashboardMsg':
-				var _p9 = A2(_user$project$Dashboard_State$update, _p6._0, model.dashboardModel);
-				var newModel = _p9._0;
-				var cmd = _p9._1;
+				var _p11 = A2(_user$project$Dashboard_State$update, _p8._0, model.dashboardModel);
+				var newModel = _p11._0;
+				var cmd = _p11._1;
 				return {
 					ctor: '_Tuple2',
 					_0: _elm_lang$core$Native_Utils.update(
@@ -15595,13 +16221,13 @@ var _user$project$App_State$update = F2(
 					_1: _elm_lang$core$Platform_Cmd$none
 				};
 			case 'LoginMsg':
-				var _p10 = A2(_user$project$Login_State$update, _p6._0, model.loginModel);
-				var newLoginModel = _p10._0;
-				var newCmd = _p10._1;
-				var outMsg = _p10._2;
-				var _p11 = A2(_user$project$App_State$interpretLoginMsg, outMsg, model);
-				var newModel = _p11._0;
-				var newOutCmd = _p11._1;
+				var _p12 = A2(_user$project$Login_State$update, _p8._0, model.loginModel);
+				var newLoginModel = _p12._0;
+				var newCmd = _p12._1;
+				var outMsg = _p12._2;
+				var _p13 = A2(_user$project$App_State$interpretLoginMsg, outMsg, model);
+				var newModel = _p13._0;
+				var newOutCmd = _p13._1;
 				return A2(
 					_elm_lang$core$Platform_Cmd_ops['!'],
 					_elm_lang$core$Native_Utils.update(
@@ -15616,6 +16242,28 @@ var _user$project$App_State$update = F2(
 							_1: {ctor: '[]'}
 						}
 					});
+			case 'EditMsg':
+				var _p14 = A2(_user$project$Edit_State$update, _p8._0, model.editModel);
+				var newEditModel = _p14._0;
+				var newCmd = _p14._1;
+				var outMsg = _p14._2;
+				var _p15 = A2(_user$project$App_State$interpretEditMsg, outMsg, model);
+				var newModel = _p15._0;
+				var newOutCmd = _p15._1;
+				return A2(
+					_elm_lang$core$Platform_Cmd_ops['!'],
+					_elm_lang$core$Native_Utils.update(
+						newModel,
+						{editModel: newEditModel}),
+					{
+						ctor: '::',
+						_0: newOutCmd,
+						_1: {
+							ctor: '::',
+							_0: A2(_elm_lang$core$Platform_Cmd$map, _user$project$App_Types$EditMsg, newCmd),
+							_1: {ctor: '[]'}
+						}
+					});
 			case 'RemoveFlash':
 				return {
 					ctor: '_Tuple2',
@@ -15625,7 +16273,7 @@ var _user$project$App_State$update = F2(
 							flashMessages: A2(
 								_elm_lang$core$List$filter,
 								function (f) {
-									return !_elm_lang$core$Native_Utils.eq(f, _p6._0);
+									return !_elm_lang$core$Native_Utils.eq(f, _p8._0);
 								},
 								model.flashMessages)
 						}),
@@ -15636,7 +16284,7 @@ var _user$project$App_State$update = F2(
 					ctor: '_Tuple2',
 					_0: _elm_lang$core$Native_Utils.update(
 						model,
-						{context: _p6._0}),
+						{context: _p8._0}),
 					_1: _elm_lang$core$Platform_Cmd$none
 				};
 			default:
@@ -15814,6 +16462,7 @@ var _user$project$Dashboard_Style$css = function (_p0) {
 	});
 
 var _user$project$Login_Style$white = _rtfeldman$elm_css$Css$hex('FFF');
+var _user$project$Login_Style$PostTable = {ctor: 'PostTable'};
 var _user$project$Login_Style$Container = {ctor: 'Container'};
 var _user$project$Login_Style$css = function (_p0) {
 	return _rtfeldman$elm_css$Css$stylesheet(
@@ -15947,7 +16596,87 @@ var _user$project$Login_Style$css = function (_p0) {
 					}
 				}
 			}),
-		_1: {ctor: '[]'}
+		_1: {
+			ctor: '::',
+			_0: A2(
+				F2(
+					function (x, y) {
+						return A2(_rtfeldman$elm_css$Css_ops['.'], x, y);
+					}),
+				_user$project$Login_Style$PostTable,
+				{
+					ctor: '::',
+					_0: A2(_rtfeldman$elm_css$Css$property, 'border-collapse', 'collapse'),
+					_1: {
+						ctor: '::',
+						_0: _rtfeldman$elm_css$Css$descendants(
+							{
+								ctor: '::',
+								_0: _rtfeldman$elm_css$Css_Elements$th(
+									{
+										ctor: '::',
+										_0: _rtfeldman$elm_css$Css$cursor(_rtfeldman$elm_css$Css$pointer),
+										_1: {
+											ctor: '::',
+											_0: A2(_rtfeldman$elm_css$Css$property, 'user-select', 'none'),
+											_1: {ctor: '[]'}
+										}
+									}),
+								_1: {
+									ctor: '::',
+									_0: _rtfeldman$elm_css$Css_Elements$tr(
+										{
+											ctor: '::',
+											_0: _rtfeldman$elm_css$Css$hover(
+												{
+													ctor: '::',
+													_0: _rtfeldman$elm_css$Css$backgroundColor(
+														_rtfeldman$elm_css$Css$hex('ccc')),
+													_1: {ctor: '[]'}
+												}),
+											_1: {ctor: '[]'}
+										}),
+									_1: {
+										ctor: '::',
+										_0: _rtfeldman$elm_css$Css_Elements$td(
+											{
+												ctor: '::',
+												_0: A2(
+													_rtfeldman$elm_css$Css$padding2,
+													_rtfeldman$elm_css$Css$px(4),
+													_rtfeldman$elm_css$Css$px(16)),
+												_1: {
+													ctor: '::',
+													_0: _rtfeldman$elm_css$Css$firstChild(
+														{
+															ctor: '::',
+															_0: _rtfeldman$elm_css$Css$children(
+																{
+																	ctor: '::',
+																	_0: A2(
+																		_rtfeldman$elm_css$Css$selector,
+																		'i',
+																		{
+																			ctor: '::',
+																			_0: _rtfeldman$elm_css$Css$cursor(_rtfeldman$elm_css$Css$pointer),
+																			_1: {ctor: '[]'}
+																		}),
+																	_1: {ctor: '[]'}
+																}),
+															_1: {ctor: '[]'}
+														}),
+													_1: {ctor: '[]'}
+												}
+											}),
+										_1: {ctor: '[]'}
+									}
+								}
+							}),
+						_1: {ctor: '[]'}
+					}
+				}),
+			_1: {ctor: '[]'}
+		}
 	});
 
 var _user$project$App_Style$footerSize = 100;
@@ -16534,6 +17263,30 @@ var _user$project$Article_View$view = function (model) {
 	}
 };
 
+var _user$project$Login_View$postTableEditView = function (post) {
+	return A2(
+		_evancz$elm_sortable_table$Table$HtmlDetails,
+		{ctor: '[]'},
+		{
+			ctor: '::',
+			_0: A2(
+				_elm_lang$html$Html$i,
+				{
+					ctor: '::',
+					_0: _elm_lang$html$Html_Attributes$class('fa fa-pencil'),
+					_1: {
+						ctor: '::',
+						_0: _elm_lang$html$Html_Events$onClick(
+							_user$project$Login_Types$StartEdit(post)),
+						_1: {ctor: '[]'}
+					}
+				},
+				{ctor: '[]'}),
+			_1: {ctor: '[]'}
+		});
+};
+var _user$project$Login_View$postTableEditColumn = _evancz$elm_sortable_table$Table$veryCustomColumn(
+	{name: 'Edit', viewData: _user$project$Login_View$postTableEditView, sorter: _evancz$elm_sortable_table$Table$unsortable});
 var _user$project$Login_View$loginFrame = function (model) {
 	return {
 		ctor: '::',
@@ -16602,6 +17355,49 @@ var _user$project$Login_View$_p0 = _rtfeldman$elm_css_helpers$Html_CssHelpers$wi
 var _user$project$Login_View$id = _user$project$Login_View$_p0.id;
 var _user$project$Login_View$class = _user$project$Login_View$_p0.$class;
 var _user$project$Login_View$classList = _user$project$Login_View$_p0.classList;
+var _user$project$Login_View$toTableAttrs = {
+	ctor: '::',
+	_0: _user$project$Login_View$class(
+		{
+			ctor: '::',
+			_0: _user$project$Login_Style$PostTable,
+			_1: {ctor: '[]'}
+		}),
+	_1: {ctor: '[]'}
+};
+var _user$project$Login_View$postTableConfig = _evancz$elm_sortable_table$Table$customConfig(
+	{
+		toId: function (_) {
+			return _.id;
+		},
+		toMsg: _user$project$Login_Types$SetPostTableState,
+		columns: {
+			ctor: '::',
+			_0: _user$project$Login_View$postTableEditColumn,
+			_1: {
+				ctor: '::',
+				_0: A2(
+					_evancz$elm_sortable_table$Table$stringColumn,
+					'Title',
+					function (_) {
+						return _.title;
+					}),
+				_1: {
+					ctor: '::',
+					_0: A2(
+						_evancz$elm_sortable_table$Table$stringColumn,
+						'Summary',
+						function (_) {
+							return _.summary;
+						}),
+					_1: {ctor: '[]'}
+				}
+			}
+		},
+		customizations: _elm_lang$core$Native_Utils.update(
+			_evancz$elm_sortable_table$Table$defaultCustomizations,
+			{tableAttrs: _user$project$Login_View$toTableAttrs})
+	});
 var _user$project$Login_View$view = F2(
 	function (model, context) {
 		return A2(
@@ -16618,8 +17414,38 @@ var _user$project$Login_View$view = F2(
 			},
 			_elm_lang$core$Native_Utils.eq(context.jwtToken, _elm_lang$core$Maybe$Nothing) ? _user$project$Login_View$loginFrame(model.loginCredentials) : {
 				ctor: '::',
-				_0: _elm_lang$html$Html$text('Hahaaa!'),
+				_0: A2(
+					_elm_lang$html$Html$div,
+					{
+						ctor: '::',
+						_0: _user$project$Login_View$class(
+							{ctor: '[]'}),
+						_1: {ctor: '[]'}
+					},
+					{
+						ctor: '::',
+						_0: A3(_evancz$elm_sortable_table$Table$view, _user$project$Login_View$postTableConfig, model.postTableState, model.posts),
+						_1: {ctor: '[]'}
+					}),
 				_1: {ctor: '[]'}
+			});
+	});
+
+var _user$project$Edit_View$view = F2(
+	function (_p0, context) {
+		var _p1 = _p0;
+		var _p2 = _p1.post;
+		return A2(
+			_elm_lang$html$Html$div,
+			{ctor: '[]'},
+			{
+				ctor: '::',
+				_0: _elm_lang$html$Html$text(_p2.id),
+				_1: {
+					ctor: '::',
+					_0: _elm_lang$html$Html$text(_p2.summary),
+					_1: {ctor: '[]'}
+				}
 			});
 	});
 
@@ -16636,6 +17462,11 @@ var _user$project$App_View$page = function (model) {
 				_elm_lang$html$Html$map,
 				_user$project$App_Types$ArticleMsg,
 				_user$project$Article_View$view(model.articleModel));
+		case 'EditRoute':
+			return A2(
+				_elm_lang$html$Html$map,
+				_user$project$App_Types$EditMsg,
+				A2(_user$project$Edit_View$view, model.editModel, model.context));
 		default:
 			return A2(
 				_elm_lang$html$Html$div,

@@ -1,19 +1,22 @@
 port module App.State exposing (..)
 
-import Navigation
-import App.Types exposing (..)
-import App.Routes exposing (parseLocation)
-import Article.Rest as ArticleService
-import Article.State as ArticleState
-import Dashboard.Rest as DashboardService
-import Dashboard.State as DashboardState
-import Login.State as LoginState
-import Login.Types as Login
-import Shared.Types exposing (FlashMessage(..), Context)
 import Task
 import Process
+import Navigation
 import Json.Decode as Decode
 import Json.Encode as Encode
+import Dashboard.Types as DashboardTypes
+import Article.Types as ArticleTypes
+import Login.Types as LoginTypes
+import Edit.Types as EditTypes
+import Dashboard.State as DashboardState
+import Article.State as ArticleState
+import Login.State as LoginState
+import Edit.State as EditState
+import App.Types exposing (..)
+import App.Routes exposing (parseLocation)
+import Shared.Types exposing (FlashMessage(..), Context, Post, PostId)
+import Shared.Service exposing (fetchPost, fetchPosts)
 
 
 -- INPUT PORTS
@@ -112,7 +115,19 @@ showFlash flashMsg model =
         ( { model | flashMessages = flashMsg :: oldFlashMessages }, removeTask )
 
 
-interpretLoginMsg : Maybe Login.OutMsg -> Model -> ( Model, Cmd Msg )
+interpretEditMsg : Maybe EditTypes.OutMsg -> Model -> ( Model, Cmd Msg )
+interpretEditMsg msg model =
+    case msg of
+        Nothing ->
+            ( model, Cmd.none )
+
+        Just outMsg ->
+            case outMsg of
+                EditTypes.Flash flashMsg ->
+                    showFlash flashMsg model
+
+
+interpretLoginMsg : Maybe LoginTypes.OutMsg -> Model -> ( Model, Cmd Msg )
 interpretLoginMsg msg model =
     case msg of
         Nothing ->
@@ -120,11 +135,14 @@ interpretLoginMsg msg model =
 
         Just outMsg ->
             case outMsg of
-                Login.Token token ->
+                LoginTypes.Token token ->
                     updateContextWithToken (Just token) model
 
-                Login.Flash flashMsg ->
+                LoginTypes.Flash flashMsg ->
                     showFlash flashMsg model
+
+                LoginTypes.UrlChangeRequest url ->
+                    ( model, Navigation.newUrl url )
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
@@ -140,10 +158,16 @@ update msg model =
             in
                 case newRoute of
                     PostsRoute ->
-                        ( newModel, Cmd.map DashboardMsg DashboardService.fetch )
+                        ( newModel, Cmd.map DashboardMsg <| fetchPosts DashboardTypes.Retrieve )
 
                     PostRoute id ->
-                        ( newModel, Cmd.map ArticleMsg (ArticleService.fetch id) )
+                        ( newModel, Cmd.map ArticleMsg <| fetchPost id ArticleTypes.Retrieve )
+
+                    EditRoute id ->
+                        ( newModel, Cmd.map EditMsg <| fetchPost id EditTypes.Retrieve )
+
+                    LoginRoute ->
+                        ( newModel, Cmd.map LoginMsg <| fetchPosts LoginTypes.Retrieve )
 
                     _ ->
                         ( newModel, Cmd.none )
@@ -171,6 +195,16 @@ update msg model =
                     interpretLoginMsg outMsg model
             in
                 { newModel | loginModel = newLoginModel } ! [ newOutCmd, Cmd.map LoginMsg newCmd ]
+
+        EditMsg subMsg ->
+            let
+                ( newEditModel, newCmd, outMsg ) =
+                    EditState.update subMsg model.editModel
+
+                ( newModel, newOutCmd ) =
+                    interpretEditMsg outMsg model
+            in
+                { newModel | editModel = newEditModel } ! [ newOutCmd, Cmd.map EditMsg newCmd ]
 
         RemoveFlash flashMsg ->
             ( { model | flashMessages = List.filter (\f -> f /= flashMsg) model.flashMessages }, Cmd.none )
