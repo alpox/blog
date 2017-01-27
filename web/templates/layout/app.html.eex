@@ -5,7 +5,7 @@
     <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">
     <link rel="stylesheet" href="<%= static_path(@conn, "/css/markdown.css") %>">
     <link rel="stylesheet" href="<%= static_path(@conn, "/css/monokai.highlight.css") %>">
-    <link rel="stylesheet" href="<%= static_path(@conn, "/style.css") %>" />
+    <link rel="stylesheet" href="<%= static_path(@conn, "/css/style.css") %>" />
     <script src="<%= static_path(@conn, "/js/highlight.pack.js") %>"></script>
   </head>
 
@@ -13,7 +13,7 @@
     <div class="bbsPageHost">
         <%= render @view_module, @view_template, assigns %>
     </div>
-    <script src="<%= static_path(@conn, "/app.js") %>"></script>
+    <script src="<%= static_path(@conn, "/js/app.js") %>"></script>
     <script>
       var app = Elm.Main.embed(document.querySelector("div"));
       var currentModel = localStorage.getItem("context");

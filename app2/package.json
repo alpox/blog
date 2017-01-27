@@ -1,0 +1,28 @@
+{
+  "name": "bbs",
+  "version": "1.0.0",
+  "description": "A private blogging system.",
+  "devDependencies": {
+    "connect": "^3.5.0",
+    "gulp": "github:gulpjs/gulp#4.0",
+    "gulp-shell": "^0.5.2"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://gitlab.com/alpoxo/bbs.git"
+  },
+  "keywords": [
+    "blog",
+    "blogging",
+    "system"
+  ],
+  "author": "Elias Bernhaut",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://gitlab.com/alpoxo/bbs/issues"
+  },
+  "homepage": "https://gitlab.com/alpoxo/bbs#README"
+}
