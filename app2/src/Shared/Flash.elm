@@ -1,6 +1,7 @@
 module Shared.Flash exposing (..)
 
 import Task
+import Time
 
 
 type Msg
@@ -9,21 +10,7 @@ type Msg
     | Error String
 
 
-message : msg -> Cmd msg
-message x =
-    Task.perform identity (Task.succeed x)
-
-
-showInfo : String -> Cmd Msg
-showInfo msg =
-    message (Info msg)
-
-
-showWarn : String -> Cmd Msg
-showWarn msg =
-    message (Warn msg)
-
-
-showError : String -> Cmd Msg
-showError msg =
-    message (Error msg)
+type alias Flash =
+    { time : Time.Time
+    , message : Msg
+    }
