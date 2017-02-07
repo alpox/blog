@@ -1,0 +1,27 @@
+<!doctype html>
+<html>
+  <head>
+    <link href="https://fonts.googleapis.com/css?family=Droid+Sans" rel="stylesheet">
+    <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="priv/static/css/markdown.css">
+    <link rel="stylesheet" href="priv/static/css/monokai.highlight.css">
+    <link rel="stylesheet" href="priv/static/css/style.css" />
+    <script src="priv/static/js/highlight.pack.js"></script>
+  </head>
+
+  <body>
+    <div class="bbsPageHost">
+        <%= render @view_module, @view_template, assigns %>
+    </div>
+    <script src="priv/static/js/app.js"></script>
+    <script>
+      var app = Elm.Main.embed(document.querySelector("div"));
+      var currentModel = localStorage.getItem("context");
+      app.ports.storageInput.send(JSON.parse(currentModel));
+      app.ports.storage.subscribe(function(data){
+        localStorage.setItem('context', JSON.stringify(data));
+      });
+    </script>
+    <script>window.onload = () => hljs.initHighlighting();</script>
+  </body>
+</html>

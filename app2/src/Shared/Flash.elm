@@ -1,7 +1,7 @@
 module Shared.Flash exposing (..)
 
-import Task
-import Time
+import Shared.Animation exposing (Animation)
+import Shared.Style as Style
 
 
 type Msg
@@ -11,6 +11,7 @@ type Msg
 
 
 type alias Flash =
-    { time : Time.Time
+    { id : Int
     , message : Msg
+    , animation : Animation Style.CssClasses
     }
