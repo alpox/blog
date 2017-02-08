@@ -1,12 +1,12 @@
 module Helper exposing (..)
 
-import App.Types exposing (Msg(..), Context)
-import Shared.Flash exposing (Flash)
+import App.Types exposing (Msg(..))
+import Shared.Types exposing (Flash, FlashMsg(..))
 import Shared.Style exposing (CssClasses(..))
 import Task exposing (andThen, succeed)
 
 
-createFlash : Shared.Flash.Msg -> Flash
+createFlash : FlashMsg -> Flash
 createFlash msg =
     { id = 0
     , message = msg
@@ -25,7 +25,7 @@ createFlash msg =
     }
 
 
-showFlashCommand : Shared.Flash.Msg -> Cmd Msg
+showFlashCommand : FlashMsg -> Cmd Msg
 showFlashCommand msg =
     (Task.succeed <| createFlash msg)
         |> Task.perform ShowFlash
@@ -33,19 +33,15 @@ showFlashCommand msg =
 
 showInfo : String -> Cmd Msg
 showInfo =
-    Shared.Flash.Info >> showFlashCommand
+    Info >> showFlashCommand
 
 
 showWarn : String -> Cmd Msg
 showWarn =
-    Shared.Flash.Warn >> showFlashCommand
+    Warn >> showFlashCommand
 
 
 showError : String -> Cmd Msg
 showError =
-    Shared.Flash.Error >> showFlashCommand
-
-updateContext : Context -> Cmd Msg
-updateContext context =
-    Task.succeed context
-    |> Task.perform NewContext
+    Error >> showFlashCommand
+    

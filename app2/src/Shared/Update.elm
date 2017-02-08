@@ -6,7 +6,9 @@ module Shared.Update
         , withModel
         , mapUpdate
         , mapCmd
+        , mapMainCmd
         , applyUpdates
+        , evaluateMaybe
         )
 
 
@@ -29,24 +31,47 @@ dispatch updateFn ( msg, model, cmd ) =
 
 collect : ( msg, model, Cmd msg ) -> ( model, Cmd msg )
 collect ( _, model, cmd ) =
-    (model, cmd)
+    ( model, cmd )
 
 
-withModel : model -> ( child, Cmd msg ) -> ( child, model, Cmd msg )
-withModel model ( child, cmd ) =
-    ( child, model, cmd )
+withModel : model -> ( child, Cmd msg, outMsg ) -> ( child, model, Cmd msg, outMsg )
+withModel model ( child, cmd, outMsg ) =
+    ( child, model, cmd, outMsg )
 
 
-mapUpdate : (child -> model -> model) -> ( child, model, Cmd msg ) -> ( child, model, Cmd msg )
-mapUpdate updateFn ( childModel, model, cmd ) =
-    ( childModel, updateFn childModel model, cmd )
+mapUpdate : (child -> model -> model) -> ( child, model, Cmd msg, outMsg ) -> ( child, model, Cmd msg, outMsg )
+mapUpdate updateFn ( childModel, model, cmd, outMsg ) =
+    ( childModel, updateFn childModel model, cmd, outMsg )
 
 
-applyUpdates : ( child, model, Cmd msg ) -> ( model, Cmd msg )
-applyUpdates ( _, model, cmd ) =
-    (model, cmd)
+applyUpdates : ( child, model, Cmd msg, outMsg ) -> ( model, Cmd msg, outMsg )
+applyUpdates ( _, model, cmd, outMsg ) =
+    ( model, cmd, outMsg )
 
 
-mapCmd : (a -> msg) -> ( model, Cmd a ) -> ( model, Cmd msg )
-mapCmd mapType ( model, cmd ) =
-    (model, Cmd.map mapType cmd)
+mapCmd : (a -> msg) -> ( model, Cmd a, outMsg ) -> ( model, Cmd msg, outMsg )
+mapCmd mapType ( model, cmd, outMsg ) =
+    ( model, Cmd.map mapType cmd, outMsg )
+
+mapMainCmd :
+    ( model, Cmd msg, Cmd msg )
+    -> (model, Cmd msg)
+mapMainCmd (model, cmd, outCmd) =
+    (model, Cmd.batch [ cmd, outCmd ])
+
+evaluateMaybe :
+    (outMsg -> model -> ( model, Cmd msg ))
+    -> Cmd msg
+    -> ( model, Cmd msg, Maybe outMsg )
+    -> ( model, Cmd msg )
+evaluateMaybe interpretOutMsg defaultCmd ( model, cmd, outMsg ) =
+    let
+        ( newModel, newCmd ) =
+            case outMsg of
+                Just someMsg ->
+                    interpretOutMsg someMsg model
+
+                Nothing ->
+                    ( model, defaultCmd )
+    in
+        ( newModel, Cmd.batch [ cmd, newCmd ] )

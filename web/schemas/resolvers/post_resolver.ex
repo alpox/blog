@@ -11,4 +11,10 @@ defmodule Web.PostResolver do
     def one(%{ id: post_id }, _) do
         {:ok, Post |> where(id: ^post_id) |> Repo.one}
     end
+
+    def update(%{id: id, post: post_params}, _info) do
+        Repo.get!(Post, id)
+        |> Post.update_changeset(post_params)
+        |> Repo.update
+    end
 end

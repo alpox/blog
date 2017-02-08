@@ -8,8 +8,10 @@ import App.Types exposing (Model, Msg(..), Route(..), initialModel)
 import App.Routes exposing (parseLocation)
 import Shared.Animation as Animation
 import Shared.List exposing (updateIf, updateOrAdd, generateId, findById, find)
-import Shared.Article exposing (Article, fetchArticle, fetchArticles)
-import Shared.Update exposing (initDispatch, dispatch, collect, withModel, mapUpdate, mapCmd, applyUpdates)
+import Shared.Types exposing (Article)
+import Shared.Service exposing (fetchArticleIfNecessary, fetchArticles)
+import Shared.Misc exposing (stringifyError)
+import Shared.Update exposing (initDispatch, dispatch, collect, withModel, mapUpdate, mapCmd, applyUpdates, evaluateMaybe, mapMainCmd)
 import Helper exposing (showInfo, showWarn, showError)
 import Edit.State as EditState
 import Edit.Types as EditTypes
@@ -24,8 +26,9 @@ init location =
         update (UrlChange location) (initialModel currentRoute)
 
 
-updateRoute : Msg -> Model -> ( Model, Cmd Msg )
-updateRoute msg model =
+
+update : Msg -> Model -> ( Model, Cmd Msg )
+update msg model =
     case msg of
         UrlChange location ->
             let
@@ -40,7 +43,7 @@ updateRoute msg model =
                         newModel => fetchArticles IncomingArticles
 
                     ArticleRoute id ->
-                        newModel => fetchArticle id IncomingArticle
+                        newModel => fetchArticleIfNecessary id model.context IncomingArticle
 
                     EditRoute id ->
                         newModel => fetchArticles IncomingArticles
@@ -48,13 +51,10 @@ updateRoute msg model =
                     _ ->
                         newModel => Cmd.none
 
-        _ ->
-            model => Cmd.none
+        SetUrl url ->
+            model => (Navigation.newUrl <| "/#/" ++ url)
 
 
-updateFlash : Msg -> Model -> ( Model, Cmd Msg )
-updateFlash msg model =
-    case msg of
         ShowFlash flash ->
             let
                 flashWithId =
@@ -93,13 +93,15 @@ updateFlash msg model =
                         , nextCmd
                         ]
 
-        _ ->
-            model => Cmd.none
+        EditMsg msg ->
+            EditState.update msg model.editModel
+                |> withModel model
+                |> mapUpdate (\childM mainM -> { mainM | editModel = childM })
+                |> mapUpdate (\childM mainM -> updateContextArticle mainM childM.article)
+                |> applyUpdates
+                |> mapCmd EditMsg
+                |> mapMainCmd
 
-
-incomingData : Msg -> Model -> ( Model, Cmd Msg )
-incomingData msg model =
-    case msg of
         IncomingArticle (Ok article) ->
             publishArticle article model
 
@@ -158,34 +160,6 @@ publishArticle article model =
         { newModel | context = newContext } => Cmd.none
 
 
-stringifyError : Http.Error -> String
-stringifyError error =
-    case error of
-        Http.BadUrl url ->
-            "Cannot not find URL '" ++ url ++ "'."
-
-        Http.Timeout ->
-            "The server does not respond."
-
-        Http.BadStatus response ->
-            "The server responded with a failure code "
-                ++ toString response.status.code
-                ++ ": "
-                ++ response.status.message
-                ++ "\n"
-                ++ "Response body: "
-                ++ (Debug.log "Response body" response.body)
-
-        Http.BadPayload str response ->
-            "Response could not be parsed: "
-                ++ (Debug.log "Parse error" str)
-                ++ "\n\nResponse body: "
-                ++ (Debug.log "Response body" response.body)
-
-        _ ->
-            "Cannot connect to the sever."
-
-
 updateContextArticle : Model -> Article -> Model
 updateContextArticle model article =
     let
@@ -199,30 +173,6 @@ updateContextArticle model article =
             { context | articles = articles }
     in
         { model | context = newContext }
-
-updateEdit : Msg -> Model -> ( Model, Cmd Msg )
-updateEdit msg model =
-    case msg of
-        EditMsg msg ->
-            EditState.update msg model.editModel
-                |> withModel model
-                |> mapUpdate (\childM mainM -> { mainM | editModel = childM })
-                |> mapUpdate (\childM mainM -> updateContextArticle mainM childM.article)
-                |> applyUpdates
-                |> mapCmd EditMsg
-
-        _ ->
-            model => Cmd.none
-
-
-update : Msg -> Model -> ( Model, Cmd Msg )
-update msg model =
-    initDispatch msg model
-        |> dispatch updateRoute
-        |> dispatch updateFlash
-        |> dispatch incomingData
-        |> dispatch updateEdit
-        |> collect
 
 
 updateWithId : { a | id : b } -> List { a | id : b } -> List { a | id : b }

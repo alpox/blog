@@ -29,6 +29,12 @@ defmodule Web.Schema do
         field :password, :string
     end
 
+    input_object :update_post_params do
+        field :title, :string
+        field :content, :string
+        field :summary, :string
+    end
+
     mutation do
         field :update_user, type: :user do
             arg :id, non_null(:string)
@@ -42,6 +48,13 @@ defmodule Web.Schema do
             arg :password, non_null(:string)
         
             resolve &Web.UserResolver.login/2
+        end
+
+        field :update_post, type: :post do
+            arg :id, non_null(:string)
+            arg :post, :update_post_params
+            
+            resolve &Web.PostResolver.update/2
         end
     end
 

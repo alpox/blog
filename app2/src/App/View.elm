@@ -2,15 +2,15 @@ module App.View exposing (view)
 
 import Html exposing (Html, text, div, h1, h2, a, span)
 import Html.Attributes exposing (href)
+import Html.Events exposing (onClick)
 import Html.CssHelpers
 import Rocket exposing ((=>))
 import Shared.Markdown as Markdown
-import Shared.Article exposing (Article)
+import Shared.Types exposing (Article, Context, Flash, FlashMsg(..))
 import Shared.List exposing (findById)
-import App.Types exposing (Model, Msg(..), Route(..), Context)
-import App.Style as Style
-import Shared.Flash as Flash exposing (Flash)
 import Shared.Style as SharedStyle
+import App.Types exposing (Model, Msg(..), Route(..))
+import App.Style as Style
 import Edit.View as Edit
 
 
@@ -23,13 +23,13 @@ flash flash =
     let
         ( flashTypeClass, msg ) =
             case flash.message of
-                Flash.Info msg ->
+                Info msg ->
                     SharedStyle.FlashInfo => msg
 
-                Flash.Error msg ->
+                Error msg ->
                     SharedStyle.FlashError => msg
 
-                Flash.Warn msg ->
+                Warn msg ->
                     SharedStyle.FlashWarn => msg
     in
         div [ class <| flashTypeClass :: SharedStyle.Flash :: flash.animation.classes ]
@@ -54,13 +54,12 @@ page model =
         _ ->
             text "Route not found"
 
+
 dashboardArticle : Article -> Html Msg
 dashboardArticle article =
-    a [ href <| "/#/article/" ++ article.id ]
-        [ div [ class [ Style.DashboardArticle ] ]
-            [ h2 [] [ text article.title ]
-            , span [] [ text article.summary ]
-            ]
+    div [ class [ Style.DashboardArticle ], onClick <| SetUrl <| "article/" ++ article.id ]
+        [ h2 [] [ text article.title ]
+        , span [] [ text article.summary ]
         ]
 
 

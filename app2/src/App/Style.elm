@@ -92,6 +92,7 @@ appCss =
         , class DashboardArticle
             [ padding2 (px 16) (px 24)
             , marginTop (px 16)
+            , cursor pointer
             , hover
                 [ transform <| scale 1.01
                 , property "transition" "transform 0.1s ease-in-out"

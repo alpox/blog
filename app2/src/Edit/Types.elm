@@ -1,15 +1,23 @@
 module Edit.Types exposing (..)
 
-import Shared.Article exposing (Article, initialArticle)
+import Http
+import Shared.Types exposing (Article, initialArticle)
+
 
 type Msg
-    = SetArticle Article
+    = SetUrl String
+    | SetArticle Article
     | TitleChange String
+    | SummaryChange String
     | ContentChange String
+    | SaveArticle
+    | ArticleUpdateResponse (Result Http.Error Article)
+
 
 type alias Model =
     { article : Article
     }
+
 
 initialModel : Model
 initialModel =

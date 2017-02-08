@@ -11,4 +11,10 @@ defmodule Web.Post do
 
     timestamps()
   end
+
+  def update_changeset(struct, params \\ %{}) do
+    struct
+    |> cast(params, [:title, :content, :summary])
+    |> validate_required([:title])
+  end
 end

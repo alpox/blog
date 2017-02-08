@@ -30,7 +30,7 @@ css =
             [ position fixed
             , top (px 16)
             , right (px 16)
-            , zIndex (int 100)
+            , zIndex (int 1000)
             ]
         , class FlashAnimationBase
             [ opacity (num 1)
