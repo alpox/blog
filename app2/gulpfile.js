@@ -52,4 +52,6 @@ gulp.task("make-dirs", shell([cmds.makeBuildDir, cmds.makeJsDir, cmds.makeCssDir
 
 gulp.task("dev", gulp.parallel("watch-src", "watch-css", "watch-assets"));
 
+gulp.task("build", gulp.series(["clean", "make-dirs", "build-all", "move-assets"]));
+
 gulp.task("default", gulp.series(["clean", "make-dirs", "build-all", "move-assets", "dev"]));

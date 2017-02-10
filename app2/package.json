@@ -3,7 +3,6 @@
   "version": "1.0.0",
   "description": "A private blogging system.",
   "devDependencies": {
-    "connect": "^3.5.0",
     "gulp": "github:gulpjs/gulp#4.0",
     "gulp-shell": "^0.5.2"
   },
