@@ -1,6 +1,8 @@
 module Shared.Types
     exposing
         ( Context
+        , JWT
+        , jwtDecoder
         , initialContext
         , Flash
         , FlashMsg(..)
@@ -8,18 +10,38 @@ module Shared.Types
         , initialArticle
         )
 
+import Time exposing (Time)
+import Json.Decode as Decode
 import Shared.Animation exposing (Animation)
 import Shared.Style as Style
 
 
+type alias JWT =
+    { token : String
+    , exp : Time
+    }
+
+
 type alias Context =
     { articles : List Article
+    , jwt : Maybe JWT
+    , isLoggedIn : Bool
     }
 
 
 initialContext : Context
 initialContext =
-    { articles = [] }
+    { articles = []
+    , jwt = Nothing
+    , isLoggedIn = False
+    }
+
+
+jwtDecoder : Decode.Decoder JWT
+jwtDecoder =
+    Decode.map2 JWT
+        (Decode.field "token" Decode.string)
+        (Decode.field "exp" Decode.float) 
 
 
 type FlashMsg
@@ -45,8 +67,8 @@ type alias Article =
 
 initialArticle : Article
 initialArticle =
-    { id = ""
-    , title = "This is a title"
-    , content = "This is some content\n --- \n And a section."
-    , summary = ""
+    { id = "new"
+    , title = "Title"
+    , content = "Content"
+    , summary = "Summary"
     }

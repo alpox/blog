@@ -1,9 +1,9 @@
 module Edit.Style exposing (..)
 
 import Css exposing (..)
-import Css.Elements exposing (li, button)
+import Css.Elements exposing (li, button, i)
 import Css.Namespace exposing (namespace)
-import Css.Colors exposing (black)
+import Css.Colors exposing (black, gray, red)
 
 
 type CssClasses
@@ -11,8 +11,8 @@ type CssClasses
     | EditNav
     | EditButtons
     | EditContainer
-    | ButtonAdd
-    | ButtonRemove
+    | ButtonGreen
+    | ButtonRed
     | SideBar
     | ArticleEdit
     | ArticleTitleEdit
@@ -21,7 +21,11 @@ type CssClasses
     | ArticlePreview
     | Separator
     | ButtonList
+    | ModifyButtons
     | Active
+    | Hidden
+    | DeleteModal
+    | Right
 
 
 css : Stylesheet
@@ -34,20 +38,20 @@ css =
             , backgroundColor (hex "FFF")
             ]
         , class EditNav
-            [ height (px 50)
+            [ displayFlex
+            , justifyContent spaceBetween
+            , height (px 50)
             , width (pct 100)
             , backgroundColor (hex "FFF")
             , borderBottom3 (px 1) solid (hex "01579b")
             , zIndex (int 100)
             ]
         , class EditButtons
-            [ displayFlex
-            , justifyContent center
-            , children
+            [ children
                 [ button
                     [ width (px 40)
                     , height (px 40)
-                    , lineHeight (px 39)
+                    , lineHeight (px 0)
                     , padding (px 0)
                     , border3 (px 1) solid black
                     , borderRadius (pct 100)
@@ -58,19 +62,23 @@ css =
                         [ marginRight (px 16)
                         ]
                     ]
-                , class ButtonAdd
+                , class ButtonGreen
                     [ backgroundColor (rgba 76 175 80 0.5)
                     , hover
                         [ backgroundColor (rgb 76 175 80)
                         ]
                     ]
-                , class ButtonRemove
+                , class ButtonRed
                     [ backgroundColor (rgba 239 83 80 0.5)
                     , hover
                         [ backgroundColor (rgb 239 83 80)
                         ]
                     ]
                 ]
+            ]
+        , class ModifyButtons
+            [ displayFlex
+            , justifyContent center
             ]
         , class EditContainer
             [ displayFlex
@@ -134,8 +142,18 @@ css =
             ]
         , class ButtonList
             [ displayFlex
-            , justifyContent flexEnd
             , height (pct 100)
+            , firstChild
+                [ children
+                    [ button
+                        [ border (px 0)
+                        , borderRight3 (px 1) dashed (hex "4fc3f7")
+                        , hover
+                            [ borderRight3 (px 1) solid (hex "4fc3f7")
+                            ]
+                        ]
+                    ]
+                ]
             , children
                 [ button
                     [ paddingRight (px 8)
@@ -157,5 +175,41 @@ css =
             ]
         , class Active
             [ backgroundColor (hex "DDD")
+            ]
+        , class DeleteModal
+            [ displayFlex
+            , alignItems center
+            , padding (px 32)
+            , paddingLeft (px 64)
+            , position absolute
+            , width (px 800)
+            , height (px 300)
+            , zIndex (int 1000)
+            , boxShadow4 (px 2) (px 2) (px 50) gray
+            , borderRadius (px 4)
+            , border3 (px 2) solid gray
+            , backgroundColor (hex "FFF")
+            , left (pct 50)
+            , top (pct 50)
+            , transform <| translate2 (pct -50) (pct -50)
+            , children
+                [ i
+                    [ fontSize (em 5)
+                    , color red
+                    , textAlign center
+                    , marginRight (px 64)
+                    ]
+                ]
+            , descendants
+                [ class EditButtons
+                    [ marginTop (px 16)
+                    ]
+                ]
+            ]
+        , class Hidden
+            [ display none
+            ]
+        , class Right
+            [ justifyContent spaceBetween
             ]
         ]

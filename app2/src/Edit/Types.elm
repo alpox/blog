@@ -12,14 +12,21 @@ type Msg
     | ContentChange String
     | SaveArticle
     | ArticleUpdateResponse (Result Http.Error Article)
+    | ArticleDeleteResponse (Result Http.Error String)
+    | NewArticle
+    | RemoveArticle
+    | AttemptRemoveArticle
+    | StopRemoveAttempt
 
 
 type alias Model =
     { article : Article
+    , deleteAttempt : Bool
     }
 
 
 initialModel : Model
 initialModel =
     { article = initialArticle
+    , deleteAttempt = False
     }

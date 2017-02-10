@@ -1,7 +1,8 @@
-module Shared.Misc exposing (stringifyError)
+module Shared.Misc exposing (stringifyError, isLoggedIn)
 
 import Http
-
+import Time exposing (Time)
+import Shared.Types exposing (Context)
 
 stringifyError : Http.Error -> String
 stringifyError error =
@@ -29,3 +30,18 @@ stringifyError error =
 
         _ ->
             "Cannot connect to the sever."
+
+
+getToken : Context -> Maybe String
+getToken context =
+    case context.jwt of
+        Just jwt ->
+            Just jwt.token
+        Nothing ->
+            Nothing
+
+isLoggedIn : Context -> Time -> Bool
+isLoggedIn context time =
+    case context.jwt of
+        Nothing -> False
+        Just jwt -> jwt.exp > (time / 1000)

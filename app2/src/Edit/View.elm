@@ -1,6 +1,6 @@
 module Edit.View exposing (..)
 
-import Html exposing (Html, h1, text, div, ul, li, a, textarea, input, button, span)
+import Html exposing (Html, h1, h2, br, text, div, ul, li, a, textarea, input, button, span)
 import Html.Attributes as Attributes exposing (contenteditable, href, value, type_, placeholder)
 import Html.Events exposing (onInput, onClick)
 import Html.CssHelpers
@@ -31,20 +31,52 @@ articleListItem currentId article =
             ]
 
 
+deleteModal : Model -> Html Msg
+deleteModal model =
+    let
+        classes =
+            Style.DeleteModal
+                :: case model.deleteAttempt of
+                    True ->
+                        []
+
+                    False ->
+                        [ Style.Hidden ]
+    in
+        div [ class classes ]
+            [ icon "exclamation-circle"
+            , div []
+                [ h2 []
+                    [ text <| "Are you sure you want to delete the article"
+                    , br [] []
+                    , text <| "'" ++ model.article.title ++ "'?"
+                    ]
+                , div [ class [ Style.EditButtons ] ]
+                    [ button [ class [ Style.ButtonGreen ], onClick RemoveArticle ] [ icon "check" ]
+                    , button [ class [ Style.ButtonRed ], onClick StopRemoveAttempt ] [ icon "times" ]
+                    ]
+                ]
+            ]
+
+
 view : Context -> Model -> Html Msg
 view context model =
     div [ class [ Style.Edit ] ]
-        [ div [ class [ Style.EditNav ] ]
+        [ deleteModal model
+        , div [ class [ Style.EditNav ] ]
             [ div [ class [ Style.ButtonList ] ]
+                [ button [ onClick <| SetUrl <| "article/" ++ model.article.id ] [ icon "newspaper-o", text " Preview" ]
+                ]
+            , div [ class [ Style.ButtonList, Style.Right ] ]
                 [ button [ onClick SaveArticle ] [ icon "paper-plane-o", text " Save" ]
                 ]
             ]
         , div [ class [ Style.EditContainer ] ]
             [ div [ class [ Style.SideBar ] ]
                 [ ul [] <| List.map (articleListItem model.article.id) context.articles
-                , div [ class [ Style.EditButtons ] ]
-                    [ button [ class [ Style.ButtonAdd ] ] [ icon "plus" ]
-                    , button [ class [ Style.ButtonRemove ] ] [ icon "trash-o" ]
+                , div [ class [ Style.EditButtons, Style.ModifyButtons ] ]
+                    [ button [ class [ Style.ButtonGreen ], onClick NewArticle ] [ icon "plus" ]
+                    , button [ class [ Style.ButtonRed ], onClick AttemptRemoveArticle ] [ icon "trash-o" ]
                     ]
                 ]
             , div [ class [ Style.ArticleEdit ] ]

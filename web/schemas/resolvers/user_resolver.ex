@@ -10,8 +10,9 @@ defmodule Web.UserResolver do
 
     def login(params, _info) do
         with {:ok, user} <- Web.Session.authenticate(params),
-            {:ok, jwt, _ } <- Guardian.encode_and_sign(user, :access) do
-            {:ok, %{token: jwt}}
+            {:ok, jwt, claims } <- Guardian.encode_and_sign(user, :access) do
+            exp = Map.get(claims, "exp")
+            {:ok, %{token: jwt, exp: exp}}
         end
     end
 end

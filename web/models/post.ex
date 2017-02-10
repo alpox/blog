@@ -17,4 +17,9 @@ defmodule Web.Post do
     |> cast(params, [:title, :content, :summary])
     |> validate_required([:title])
   end
+
+  def insert_changeset(params \\ %{}) do
+    %Web.Post{}
+    |> cast(params, [:title, :content, :summary])
+  end
 end

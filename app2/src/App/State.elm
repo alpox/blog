@@ -1,20 +1,116 @@
-module App.State exposing (init, update)
+port module App.State exposing (init, update, subscriptions)
 
 import Task
-import Http exposing (Response)
+import Time
 import Navigation
+import Json.Decode as Decode
+import Json.Encode as Encode
 import Rocket exposing ((=>))
 import App.Types exposing (Model, Msg(..), Route(..), initialModel)
 import App.Routes exposing (parseLocation)
 import Shared.Animation as Animation
 import Shared.List exposing (updateIf, updateOrAdd, generateId, findById, find)
-import Shared.Types exposing (Article)
-import Shared.Service exposing (fetchArticleIfNecessary, fetchArticles)
-import Shared.Misc exposing (stringifyError)
-import Shared.Update exposing (initDispatch, dispatch, collect, withModel, mapUpdate, mapCmd, applyUpdates, evaluateMaybe, mapMainCmd)
+import Shared.Types exposing (Article, Context, JWT, jwtDecoder, initialArticle)
+import Shared.Service exposing (fetchArticleIfNecessary, fetchArticles, login, articleDecoder)
+import Shared.Misc exposing (stringifyError, isLoggedIn)
+import Shared.Update
+    exposing
+        ( initDispatch
+        , dispatch
+        , collect
+        , withModel
+        , mapUpdate
+        , mapCmd
+        , applyUpdates
+        , evaluateMaybe
+        , mapMainCmd
+        , sendMessage
+        , sendSingleMessage
+        )
 import Helper exposing (showInfo, showWarn, showError)
 import Edit.State as EditState
 import Edit.Types as EditTypes
+
+
+-- INPUT PORTS
+
+
+port storageInput : (Decode.Value -> msg) -> Sub msg
+
+
+
+-- OUTPUT PORTS
+
+
+port storage : Encode.Value -> Cmd msg
+
+
+subscriptions : Model -> Sub Msg
+subscriptions model =
+    Sub.batch
+        [ storageInput mapStorageInput
+        , Time.every Time.second Tick
+        ]
+
+
+encodeContext : Context -> Encode.Value
+encodeContext context =
+    let
+        articleEncoder article =
+            Encode.object
+                [ ( "id", Encode.string article.id )
+                , ( "title", Encode.string article.title )
+                , ( "content", Encode.string article.content )
+                , ( "summary", Encode.string article.summary )
+                ]
+
+        encodedArticles =
+            Encode.list <| List.map articleEncoder context.articles
+
+        encodedToken =
+            case context.jwt of
+                Just jwt ->
+                    Encode.object
+                        [ ( "token", Encode.string jwt.token )
+                        , ( "exp", Encode.float jwt.exp )
+                        ]
+
+                Nothing ->
+                    Encode.null
+    in
+        Encode.object
+            [ ( "articles", encodedArticles )
+            , ( "jwt", encodedToken )
+            , ( "isLoggedIn", Encode.bool context.isLoggedIn )
+            ]
+
+
+decodeContext : Decode.Value -> Result String Context
+decodeContext =
+    Decode.map3 Context
+        (Decode.field "articles" (Decode.list articleDecoder))
+        (Decode.field "jwt" (Decode.nullable jwtDecoder))
+        (Decode.field "isLoggedIn" Decode.bool)
+        |> Decode.decodeValue
+
+
+mapStorageInput : Decode.Value -> Msg
+mapStorageInput input =
+    case decodeContext input of
+        Ok context ->
+            SetContext context
+
+        Err errorMessage ->
+            let
+                _ =
+                    Debug.log "Error in mapStorageInput:" errorMessage
+            in
+                NoOp
+
+
+sendToStorage : Context -> Cmd Msg
+sendToStorage context =
+    encodeContext context |> storage
 
 
 init : Navigation.Location -> ( Model, Cmd Msg )
@@ -24,7 +120,6 @@ init location =
             parseLocation location
     in
         update (UrlChange location) (initialModel currentRoute)
-
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
@@ -46,7 +141,10 @@ update msg model =
                         newModel => fetchArticleIfNecessary id model.context IncomingArticle
 
                     EditRoute id ->
-                        newModel => fetchArticles IncomingArticles
+                        if model.context.isLoggedIn then
+                            newModel => fetchArticles IncomingArticles
+                        else
+                            { model | route = DashboardRoute } => (Navigation.modifyUrl <| "/")
 
                     _ ->
                         newModel => Cmd.none
@@ -54,6 +152,8 @@ update msg model =
         SetUrl url ->
             model => (Navigation.newUrl <| "/#/" ++ url)
 
+        SetContext context ->
+            { model | context = context } => sendToStorage context
 
         ShowFlash flash ->
             let
@@ -63,7 +163,7 @@ update msg model =
                 newModel =
                     { model | flashes = flashWithId :: model.flashes }
             in
-                newModel => Animation.delayMessage 2000 (AnimationMsg flashWithId Animation.Initialize)
+                newModel => Animation.delayMessage 3000 (AnimationMsg flashWithId Animation.Initialize)
 
         RemoveFlash flash ->
             { model | flashes = List.filter (.id >> (/=) flash.id) model.flashes } => Cmd.none
@@ -93,14 +193,8 @@ update msg model =
                         , nextCmd
                         ]
 
-        EditMsg msg ->
-            EditState.update msg model.editModel
-                |> withModel model
-                |> mapUpdate (\childM mainM -> { mainM | editModel = childM })
-                |> mapUpdate (\childM mainM -> updateContextArticle mainM childM.article)
-                |> applyUpdates
-                |> mapCmd EditMsg
-                |> mapMainCmd
+        EditMsg editMsg ->
+            updateEdit editMsg model
 
         IncomingArticle (Ok article) ->
             publishArticle article model
@@ -109,13 +203,118 @@ update msg model =
             model => (showError <| stringifyError err)
 
         IncomingArticles (Ok articles) ->
-            foldUpdate publishArticle articles model
+            let
+                ( newModel, newCmd ) =
+                    foldUpdate publishArticle articles model
+
+                editId =
+                    Maybe.withDefault "" <| getEditRouteId newModel
+
+                articleInContext =
+                    findById editId newModel.context.articles
+
+                firstArticle =
+                    Maybe.withDefault initialArticle (List.head newModel.context.articles)
+
+                currentArticle =
+                    Maybe.withDefault firstArticle articleInContext
+
+                ( newModelFromEdit, newCmdFromEdit ) =
+                    updateEdit (EditTypes.SetArticle currentArticle) newModel
+            in
+                newModelFromEdit
+                    => Cmd.batch
+                        [ newCmd
+                        , newCmdFromEdit
+                        ]
 
         IncomingArticles (Err err) ->
             model => (showError <| stringifyError err)
 
-        _ ->
+        ShowLoginModal ->
+            { model | showLoginModal = True } => Cmd.none
+
+        CloseLoginModal ->
+            { model | showLoginModal = False } => Cmd.none
+
+        SetUsername username ->
+            { model | username = username } => Cmd.none
+
+        SetPassword password ->
+            { model | password = password } => Cmd.none
+
+        Login ->
+            model => login model.username model.password LoginResponse
+
+        Logout ->
+            let
+                context =
+                    model.context
+
+                newContext =
+                    { context
+                        | jwt = Nothing
+                        , isLoggedIn = False
+                    }
+            in
+                model => sendMessage SetContext newContext
+
+        LoginResponse (Ok jwt) ->
+            let
+                context =
+                    model.context
+
+                newContext =
+                    { context
+                        | jwt = Just jwt
+                        , isLoggedIn = True
+                    }
+            in
+                model
+                    => Cmd.batch
+                        [ showInfo "Successfully logged in."
+                        , sendSingleMessage CloseLoginModal
+                        , sendMessage SetContext newContext
+                        ]
+
+        LoginResponse (Err err) ->
+            model
+                => Cmd.batch
+                    [ (showError <| "Wrong login credentials!")
+                    ]
+
+        Tick time ->
+            let
+                context =
+                    model.context
+
+                newContext =
+                    { context | isLoggedIn = isLoggedIn context time }
+            in
+                { model | currentTime = time } => sendMessage SetContext newContext
+
+        NoOp ->
             model => Cmd.none
+
+
+updateEdit : EditTypes.Msg -> Model -> ( Model, Cmd Msg )
+updateEdit msg model =
+    EditState.update msg model.editModel model.context
+        |> withModel model
+        |> mapUpdate (\childM mainM -> { mainM | editModel = childM })
+        |> applyUpdates
+        |> mapCmd EditMsg
+        |> mapMainCmd
+
+
+getEditRouteId : Model -> Maybe String
+getEditRouteId model =
+    case model.route of
+        EditRoute id ->
+            Just id
+
+        _ ->
+            Nothing
 
 
 foldUpdate : (a -> Model -> ( Model, Cmd Msg )) -> List a -> Model -> ( Model, Cmd Msg )
@@ -145,34 +344,8 @@ publishArticle article model =
 
         editModel =
             model.editModel
-
-        newModel =
-            case model.route of
-                EditRoute id ->
-                    if article.id == id then
-                        { model | editModel = { editModel | article = article } }
-                    else
-                        model
-
-                _ ->
-                    model
     in
-        { newModel | context = newContext } => Cmd.none
-
-
-updateContextArticle : Model -> Article -> Model
-updateContextArticle model article =
-    let
-        articles =
-            updateOrAdd article model.context.articles
-
-        context =
-            model.context
-
-        newContext =
-            { context | articles = articles }
-    in
-        { model | context = newContext }
+        { model | context = newContext } => Cmd.none
 
 
 updateWithId : { a | id : b } -> List { a | id : b } -> List { a | id : b }

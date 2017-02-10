@@ -5,7 +5,7 @@ import Html exposing (Html, text)
 import App.Style exposing (..)
 import App.Types exposing (Model, Msg(..))
 import App.View exposing (view)
-import App.State exposing (init, update)
+import App.State exposing (init, update, subscriptions)
 
 
 main : Program Never Model Msg
@@ -14,5 +14,5 @@ main =
         { init = init
         , view = view
         , update = update
-        , subscriptions = (\_ -> Sub.none)
+        , subscriptions = subscriptions
         }

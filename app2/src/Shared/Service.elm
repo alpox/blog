@@ -1,11 +1,42 @@
-module Shared.Service exposing (fetchArticle, fetchArticleIfNecessary, fetchArticles, updateArticle)
+module Shared.Service
+    exposing
+        ( login
+        , fetchArticle
+        , fetchArticleIfNecessary
+        , fetchArticles
+        , deleteArticle
+        , updateOrInsertArticle
+        , articleEncoder
+        , articleDecoder
+        )
 
 import Http
 import Json.Decode as Decode exposing (field)
 import Json.Encode as Encode
-import Graphql exposing (query, withVariable, send)
+import Graphql exposing (query, withVariable, withToken, send, toTask)
 import Shared.List exposing (findById)
-import Shared.Types exposing (Context, Article)
+import Shared.Types exposing (Context, Article, JWT)
+
+
+login : String -> String -> (Result Http.Error JWT -> msg) -> Cmd msg
+login username password messageType =
+    query """
+        mutation ($password: String!, $username: String!) {
+            login(username: $username, password: $password) {
+                token
+                exp
+            }
+        }
+        """
+        |> withVariable ( "username", Encode.string username )
+        |> withVariable ( "password", Encode.string password )
+        |> (send messageType <| Decode.at [ "login" ] jwtDecoder)
+
+jwtDecoder : Decode.Decoder JWT
+jwtDecoder =
+    Decode.map2 JWT
+        (Decode.field "token" Decode.string)
+        (Decode.field "exp" <| Decode.map (String.toFloat >> Result.withDefault 0) Decode.string) 
 
 
 fetchArticles : (Result Http.Error (List Article) -> msg) -> Cmd msg
@@ -69,18 +100,61 @@ articleEncoder article =
     )
 
 
-updateArticle : Article -> (Result Http.Error Article -> msg) -> Cmd msg
-updateArticle article resultMsg =
-    query """
-        mutation($id: String!, $post: UpdatePostParams!) {
-            updatePost(id: $id, post: $post) {
-                id
-                title
-                content
-                summary
-            }
-        }
-    """
-        |> withVariable ( "id", Encode.string article.id )
-        |> withVariable ( "post", articleEncoder article )
-        |> (send resultMsg <| Decode.at [ "updatePost" ] articleDecoder)
+deleteArticle : Article -> Context -> (Result Http.Error String -> msg) -> Cmd msg
+deleteArticle article context resultMsg =
+    case context.jwt of
+        Just jwt ->
+            query """
+                mutation ($id: String!) {
+                    post: deletePost(id: $id) {
+                        id
+                    }
+                }
+            """
+                |> withVariable ( "id", Encode.string article.id )
+                |> withToken jwt.token
+                |> (send resultMsg <| Decode.at [ "post" ] <| (field "id" Decode.string))
+
+        Nothing ->
+            Cmd.none
+
+
+updateOrInsertArticle : Article -> Context -> (Result Http.Error Article -> msg) -> Cmd msg
+updateOrInsertArticle article context resultMsg =
+    let
+        ( queryString, idVariable ) =
+            if article.id == "new" then
+                ( """
+                mutation($post: UpdatePostParams!) {
+                    post: insertPost(post: $post) {
+                        id
+                        title
+                        content
+                        summary
+                    }
+                }
+            """, [] )
+            else
+                ( """
+                mutation($id: String!, $post: UpdatePostParams!) {
+                    post: updatePost(id: $id, post: $post) {
+                        id
+                        title
+                        content
+                        summary
+                    }
+                }
+            """, [ ( "id", Encode.string article.id ) ] )
+
+        variables =
+            idVariable ++ [ ( "post", articleEncoder article ) ]
+    in
+        case context.jwt of
+            Just jwt ->
+                query queryString
+                    |> (flip (List.foldl withVariable) variables)
+                    |> withToken jwt.token
+                    |> (send resultMsg <| Decode.at [ "post" ] articleDecoder)
+
+            Nothing ->
+                Cmd.none

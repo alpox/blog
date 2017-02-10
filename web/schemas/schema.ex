@@ -21,6 +21,7 @@ defmodule Web.Schema do
 
     object :session do
         field :token, :string
+        field :exp, :string
     end
 
     input_object :update_user_params do
@@ -55,6 +56,18 @@ defmodule Web.Schema do
             arg :post, :update_post_params
             
             resolve &Web.PostResolver.update/2
+        end
+
+        field :insert_post, type: :post do
+            arg :post, :update_post_params
+
+            resolve &Web.PostResolver.insert/2
+        end
+
+        field :delete_post, type: :post do
+            arg :id, non_null(:string)
+
+            resolve &Web.PostResolver.delete/2
         end
     end
 

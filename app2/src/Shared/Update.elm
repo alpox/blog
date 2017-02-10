@@ -9,7 +9,11 @@ module Shared.Update
         , mapMainCmd
         , applyUpdates
         , evaluateMaybe
+        , sendMessage
+        , sendSingleMessage
         )
+
+import Task
 
 
 initDispatch : msg -> model -> ( msg, model, Cmd msg )
@@ -75,3 +79,11 @@ evaluateMaybe interpretOutMsg defaultCmd ( model, cmd, outMsg ) =
                     ( model, defaultCmd )
     in
         ( newModel, Cmd.batch [ cmd, newCmd ] )
+
+sendMessage : (a -> msg) -> a -> Cmd msg
+sendMessage msg input =
+    Task.perform msg <| Task.succeed input
+
+sendSingleMessage : msg -> Cmd msg
+sendSingleMessage msg =
+    Task.perform (always msg) <| Task.succeed ()
