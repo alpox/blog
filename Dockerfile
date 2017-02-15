@@ -1,5 +1,5 @@
 # Pull base image.
-FROM ubuntu-node-elixir
+FROM alpox/docker_node_elixir
 
 RUN locale-gen en_US.UTF-8  
 ENV LANG en_US.UTF-8  

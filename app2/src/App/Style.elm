@@ -1,7 +1,7 @@
 module App.Style exposing (..)
 
 import Css exposing (..)
-import Css.Elements exposing (html, span, input, body, h1, h2, h3, h4, footer, ul, li, a, button)
+import Css.Elements exposing (html, span, input, div, body, h1, h2, h3, h4, img, footer, ul, li, a, button)
 import Css.Namespace exposing (namespace)
 import Css.Colors exposing (gray, black)
 import Shared.Style as SharedStyle
@@ -11,8 +11,11 @@ import Edit.Style as EditStyle
 type CssClasses
     = Container
     | PageFrame
+    | PageAnchor
     | Article
     | DashboardArticle
+    | Summary
+    | TagLine
     | NavBar
     | Slider
     | ButtonList
@@ -22,7 +25,9 @@ type CssClasses
     | ButtonLogin
     | LoginModal
     | CloseModal
-    | Separator
+    | FloatingSideBar
+    | SideBarSection
+    | SocialIcons
 
 
 footerSize : Float
@@ -64,9 +69,10 @@ appCss =
             , height (pct 100)
             , fontFamilies [ "Droid Sans", .value sansSerif ]
             , backgroundImage (url "/img/fresh_snow.png")
+            , color (rgb 100 100 100)
             ]
         , each [ h1, h2, h3, h4 ]
-            [ color (rgb 40 40 40)
+            [ color (rgb 60 60 60)
             , margin (px 0)
             , marginBottom (px 8)
             ]
@@ -90,12 +96,9 @@ appCss =
         , class PageFrame
             [ backgroundColor (hex "FFF")
             , padding2 (px 16) (px 24)
-            , width (pct 70)
-            , height (pct 100)
-            , position absolute
-            , left (pct 50)
-            , top (px 400)
-            , transform <| translateX (pct -50)
+            , width (pct 60)
+            , property "min-height" "calc(100vh - 400px)"
+            , top (px 350)
             , boxSizing borderBox
             , overflow hidden
             , boxShadow4 (px 0) (px 0) (px 10) gray
@@ -110,17 +113,37 @@ appCss =
                     ]
                 ]
             ]
+        , class PageAnchor
+            [ displayFlex
+            ]
         , class DashboardArticle
             [ position relative
             , padding2 (px 16) (px 24)
             , paddingLeft (px 8)
             , marginLeft (px -8)
             , marginTop (px 16)
-            , cursor pointer
-            , hover
-                [ transform <| scale 1.01
-                , property "transition" "transform 0.1s ease-in-out"
-                , backgroundColor (hex "F5F5F5")
+            , children
+                [ h3 [ color (hex "004d40") ]
+                , class Summary
+                    [ padding2 (px 16) (px 0)
+                    ]
+                , class TagLine
+                    [ displayFlex
+                    , justifyContent spaceBetween
+                    , height (px 36)
+                    , lineHeight (px 36)
+                    , fontSize (em 0.8)
+                    , borderTop3 (px 1) solid (hex "DDD")
+                    , borderBottom3 (px 1) solid (hex "DDD")
+                    , children
+                        [ span
+                            [ lastChild
+                                [ cursor pointer
+                                , color (hex "004d40")
+                                ]
+                            ]
+                        ]
+                    ]
                 ]
             ]
         , class CloseModal
@@ -184,6 +207,7 @@ appCss =
             , backgroundImage (url "/img/background_rope.jpeg")
             , backgroundSize cover
             , property "background-position" "50% 60%"
+            , zIndex (int 1000)
             ]
         , class LoginModal
             [ displayFlex
@@ -245,12 +269,50 @@ appCss =
         , class Hidden
             [ display none
             ]
-        , class Separator
-            [ position absolute
-            , left (px 8)
-            , bottom (px 0)
-            , width (pct 10)
-            , height (px 1)
-            , backgroundColor (hex "004d40")
+        , class FloatingSideBar
+            [ flexGrow (num 1)
+            , children
+                [ div
+                    [ position relative
+                    , backgroundColor (hex "FFF")
+                    , margin2 (px 32) (px 64)
+                    , padding (px 16)
+                    , textAlign center
+                    , boxShadow4 (px 0) (px 0) (px 10) gray
+                    , borderRadius (px 4)
+                    , children
+                        [ img
+                            [ position absolute
+                            , width (px 192)
+                            , height (px 192)
+                            , left (pct 50)
+                            , top (px 20)
+                            , padding (px 16)
+                            , backgroundColor (hex ("FFF"))
+                            , borderRadius (pct 100)
+                            , transform <| translateX (pct -50)
+                            ]
+                        , class SideBarSection
+                            [ paddingTop (px 100)
+                            , marginTop (px 100)
+                            , borderTop3 (px 3) solid (hex "004d40")
+                            , children
+                                [ class SocialIcons
+                                    [ displayFlex
+                                    , justifyContent center
+                                    , descendants
+                                        [ a
+                                            [ marginLeft (px 16)
+                                            , marginTop (px 8)
+                                            , cursor pointer
+                                            ]
+                                        , img [ width (px 42) ]
+                                        ]
+                                    ]
+                                ]
+                            ]
+                        ]
+                    ]
+                ]
             ]
         ]

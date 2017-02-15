@@ -1,9 +1,11 @@
 module App.View exposing (view)
 
-import Html exposing (Html, input, text, div, h1, h2, a, span, button)
-import Html.Attributes exposing (href, type_, placeholder)
+import Html exposing (Html, input, text, div, h1, h2, h3, a, img, span, button, p)
+import Html.Attributes exposing (href, src, type_, placeholder)
 import Html.Events exposing (onClick, onInput)
 import Html.CssHelpers
+import Date exposing (Date)
+import Date.Format as DateFormat
 import Rocket exposing ((=>))
 import Shared.Markdown as Markdown
 import Shared.Types exposing (Article, Context, Flash, FlashMsg(..))
@@ -56,12 +58,20 @@ page model =
             text "Route not found"
 
 
+presentationTime : Date -> String
+presentationTime date =
+    DateFormat.format "%e. %B %Y  %H:%M" <| date
+
+
 dashboardArticle : Article -> Html Msg
 dashboardArticle article =
-    div [ class [ Style.DashboardArticle ], onClick <| SetUrl <| "article/" ++ article.id ]
-        [ h2 [] [ text article.title ]
-        , span [] [ text article.summary ]
-        , span [ class [ Style.Separator ] ] []
+    div [ class [ Style.DashboardArticle ] ]
+        [ h3 [] [ text article.title ]
+        , div [ class [ Style.Summary ] ] [ span [] [ text article.summary ] ]
+        , div [ class [ Style.TagLine ] ]
+            [ span [] [ text <| "On " ++ presentationTime article.insertedAt ++ " / by Alpox" ]
+            , span [ onClick <| SetUrl <| "article/" ++ article.id ] [ text "read more" ]
+            ]
         ]
 
 
@@ -152,6 +162,25 @@ htmlIfEditRoute html default model =
             default
 
 
+sideBar : Html Msg
+sideBar =
+    div [ class [ Style.FloatingSideBar ] ]
+        [ div []
+            [ img [ src "/img/profile.png" ] []
+            , div [ class [ Style.SideBarSection ] ]
+                [ h2 [] [ text "Alpox" ]
+                , p [] [ text "Software engineer," ]
+                , p [] [ text "Full-stack developer" ]
+                , p [] [ text "and data juggler" ]
+                , div [ class [ Style.SocialIcons ] ]
+                    [ a [ href "http://github.com/alpox" ] [ img [ src "/img/github.png" ] [] ]
+                    , a [ href "https://ch.linkedin.com/in/elias-bernhaut-10bbb610b" ] [ img [ src "/img/linkedin.png" ] [] ]
+                    ]
+                ]
+            ]
+        ]
+
+
 view : Model -> Html Msg
 view model =
     div []
@@ -162,11 +191,13 @@ view model =
         , htmlIfEditRoute
             (Html.map EditMsg <| Edit.view model.context model.editModel)
             (div []
-                [ div
-                    [ class [ Style.Slider ] ]
+                [ div [ class [ Style.Slider ] ]
                     []
-                , div [ class [ Style.PageFrame ] ]
-                    [ page model
+                , div [ class [ Style.PageAnchor ] ]
+                    [ div [ class [ Style.PageFrame ] ]
+                        [ page model
+                        ]
+                    , sideBar
                     ]
                 ]
             )

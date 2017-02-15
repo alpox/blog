@@ -26,6 +26,7 @@ type CssClasses
     | Hidden
     | DeleteModal
     | Right
+    | NotSaved
 
 
 css : Stylesheet
@@ -211,5 +212,13 @@ css =
             ]
         , class Right
             [ justifyContent spaceBetween
+            ]
+        , class NotSaved
+            [ backgroundColor (rgba 191 54 12 0.3)
+            , withClass [ Active ]
+                [ backgroundColor (rgba 166 29 0 0.2) ]
+            , hover
+                [ important <| backgroundColor (rgba 166 29 0 0.3)
+                ]
             ]
         ]

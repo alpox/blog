@@ -8,6 +8,7 @@ defmodule Web.Schema do
         field :title, :string
         field :content, :string
         field :summary, :string
+        field :inserted_at, :string
         field :user, :user, resolve: assoc(:user)
     end
 

@@ -23,9 +23,15 @@ articleListItem currentId article =
                 [ Style.Active ]
             else
                 []
+        
+        savedClass =
+            if article.saved then
+                []
+            else
+                [ Style.NotSaved ]
     in
         a [ onClick <| SetUrl <| "edit/" ++ article.id ]
-            [ li [ class activeClass ]
+            [ li [ class <| activeClass ++ savedClass ]
                 [ text article.title
                 ]
             ]

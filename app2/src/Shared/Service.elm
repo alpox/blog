@@ -11,7 +11,9 @@ module Shared.Service
         )
 
 import Http
+import Date
 import Json.Decode as Decode exposing (field)
+import Json.Decode.Pipeline exposing (decode, required, optional)
 import Json.Encode as Encode
 import Graphql exposing (query, withVariable, withToken, send, toTask)
 import Shared.List exposing (findById)
@@ -48,6 +50,7 @@ fetchArticles messageType =
             title
             content
             summary
+            insertedAt
         }
     }
     """
@@ -73,21 +76,31 @@ fetchArticle id messageType =
             title
             content
             summary
+            insertedAt
         }
     }
     """
         |> withVariable ( "id", Encode.string id )
         |> (send messageType <| Decode.at [ "post" ] articleDecoder)
 
+dateDecoder : Decode.Decoder Date.Date
+dateDecoder =
+    Decode.string
+        |> Decode.andThen (\val -> 
+            case Date.fromString val of
+                Err err -> Decode.fail err
+                Ok date -> Decode.succeed date
+        )
 
 articleDecoder : Decode.Decoder Article
 articleDecoder =
-    (Decode.map4 Article
-        (field "id" Decode.string)
-        (field "title" Decode.string)
-        (field "content" Decode.string)
-        (field "summary" Decode.string)
-    )
+    decode Article
+        |> required "id" Decode.string
+        |> required "title" Decode.string
+        |> required "content" Decode.string
+        |> required "summary" Decode.string
+        |> required "insertedAt" dateDecoder
+        |> optional "saved" Decode.bool True
 
 
 articleEncoder : Article -> Encode.Value
@@ -131,6 +144,7 @@ updateOrInsertArticle article context resultMsg =
                         title
                         content
                         summary
+                        insertedAt
                     }
                 }
             """, [] )
@@ -142,6 +156,7 @@ updateOrInsertArticle article context resultMsg =
                         title
                         content
                         summary
+                        insertedAt
                     }
                 }
             """, [ ( "id", Encode.string article.id ) ] )

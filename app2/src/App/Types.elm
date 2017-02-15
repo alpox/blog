@@ -35,6 +35,7 @@ type Msg
     | CloseLoginModal
     | RemoveFlash Flash
     | SetContext Context
+    | NewContext Context
     | IncomingArticle (Result Http.Error Article)
     | IncomingArticles (Result Http.Error (List Article))
     | AnimationMsg Flash Animation.Msg

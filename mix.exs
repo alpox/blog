@@ -41,7 +41,7 @@ defmodule Web.Mixfile do
      {:absinthe, "~> 1.2.0"},
      {:absinthe_plug, "~> 1.1"},
      {:absinthe_ecto, git: "https://github.com/absinthe-graphql/absinthe_ecto.git" },
-     {:comeonin, "~> 3.0.0"},
+     {:comeonin, "~> 3.0"},
      {:guardian, "~> 0.14.0"}]
   end
 

@@ -10,6 +10,7 @@ module Shared.Types
         , initialArticle
         )
 
+import Date exposing (Date)
 import Time exposing (Time)
 import Json.Decode as Decode
 import Shared.Animation exposing (Animation)
@@ -62,6 +63,8 @@ type alias Article =
     , title : String
     , content : String
     , summary : String
+    , insertedAt : Date
+    , saved : Bool
     }
 
 
@@ -71,4 +74,6 @@ initialArticle =
     , title = "Title"
     , content = "Content"
     , summary = "Summary"
+    , insertedAt = Date.fromTime 0
+    , saved = False
     }

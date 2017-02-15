@@ -62,6 +62,8 @@ encodeContext context =
                 , ( "title", Encode.string article.title )
                 , ( "content", Encode.string article.content )
                 , ( "summary", Encode.string article.summary )
+                , ( "insertedAt", Encode.string <| toString article.insertedAt )
+                , ( "saved", Encode.bool article.saved )
                 ]
 
         encodedArticles =
@@ -153,6 +155,9 @@ update msg model =
             model => (Navigation.newUrl <| "/#/" ++ url)
 
         SetContext context ->
+            { model | context = context } => Cmd.none
+
+        NewContext context ->
             { model | context = context } => sendToStorage context
 
         ShowFlash flash ->
@@ -257,7 +262,7 @@ update msg model =
                         , isLoggedIn = False
                     }
             in
-                model => sendMessage SetContext newContext
+                model => sendMessage NewContext newContext
 
         LoginResponse (Ok jwt) ->
             let
@@ -274,7 +279,7 @@ update msg model =
                     => Cmd.batch
                         [ showInfo "Successfully logged in."
                         , sendSingleMessage CloseLoginModal
-                        , sendMessage SetContext newContext
+                        , sendMessage NewContext newContext
                         ]
 
         LoginResponse (Err err) ->
@@ -290,8 +295,14 @@ update msg model =
 
                 newContext =
                     { context | isLoggedIn = isLoggedIn context time }
+
+                storeCmd =
+                    if context.isLoggedIn /= newContext.isLoggedIn then
+                        sendMessage NewContext newContext
+                    else
+                        Cmd.none
             in
-                { model | currentTime = time } => sendMessage SetContext newContext
+                { model | currentTime = time } => storeCmd
 
         NoOp ->
             model => Cmd.none

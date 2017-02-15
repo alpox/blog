@@ -29,7 +29,7 @@ update msg model context =
                     model.article
 
                 newArticle =
-                    { article | title = newTitle }
+                    { article | title = newTitle, saved = False }
             in
                 ( { model | article = newArticle }
                 , Cmd.none
@@ -42,7 +42,7 @@ update msg model context =
                     model.article
 
                 newArticle =
-                    { article | summary = newSummary }
+                    { article | summary = newSummary, saved = False }
             in
                 ( { model | article = newArticle }
                 , Cmd.none
@@ -55,7 +55,7 @@ update msg model context =
                     model.article
 
                 newArticle =
-                    { article | content = newContent }
+                    { article | content = newContent, saved = False }
             in
                 ( { model | article = newArticle }
                 , Cmd.none
@@ -142,7 +142,7 @@ deleteArticle model context =
 
 updateContext : Context -> Cmd AppTypes.Msg
 updateContext context =
-    Task.perform AppTypes.SetContext <| Task.succeed context
+    Task.perform AppTypes.NewContext <| Task.succeed context
 
 
 updateContextWithArticle : Article -> Context -> Cmd AppTypes.Msg

@@ -3,11 +3,11 @@ services:
     web:
         build: .
         ports:
-        - "4000:4000"
+            - 4000:4000
         volumes:
-        - .:/var/www/blog/
+            - .:/var/www/blog/
         links:
-        - "db:db"
+            - "db:db"
         environment:
             MIX_ENV: "dev"
 
