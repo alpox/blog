@@ -15,20 +15,24 @@ updateIf predicate updateFn list =
             )
                 :: updateIf predicate updateFn rest
 
+
 find : (a -> Bool) -> List a -> Maybe a
 find predicate list =
     case list of
         [] ->
             Nothing
+
         first :: rest ->
             if predicate first then
                 Just first
             else
                 find predicate rest
 
+
 findById : a -> List { b | id : a } -> Maybe { b | id : a }
 findById id list =
     find (.id >> (==) id) list
+
 
 generateId : List { a | id : Int } -> Int
 generateId list =
@@ -48,6 +52,7 @@ generateId list =
             |> List.sort
             |> firstGap 0
 
+
 updateOrAdd : { b | id : a } -> List { b | id : a } -> List { b | id : a }
 updateOrAdd item list =
     case list of
@@ -56,5 +61,6 @@ updateOrAdd item list =
                 item :: rest
             else
                 first :: updateOrAdd item rest
+
         [] ->
             item :: []

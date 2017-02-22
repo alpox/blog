@@ -34,11 +34,12 @@ login username password messageType =
         |> withVariable ( "password", Encode.string password )
         |> (send messageType <| Decode.at [ "login" ] jwtDecoder)
 
+
 jwtDecoder : Decode.Decoder JWT
 jwtDecoder =
     Decode.map2 JWT
         (Decode.field "token" Decode.string)
-        (Decode.field "exp" <| Decode.map (String.toFloat >> Result.withDefault 0) Decode.string) 
+        (Decode.field "exp" <| Decode.map (String.toFloat >> Result.withDefault 0) Decode.string)
 
 
 fetchArticles : (Result Http.Error (List Article) -> msg) -> Cmd msg
@@ -83,14 +84,20 @@ fetchArticle id messageType =
         |> withVariable ( "id", Encode.string id )
         |> (send messageType <| Decode.at [ "post" ] articleDecoder)
 
+
 dateDecoder : Decode.Decoder Date.Date
 dateDecoder =
     Decode.string
-        |> Decode.andThen (\val -> 
-            case Date.fromString val of
-                Err err -> Decode.fail err
-                Ok date -> Decode.succeed date
-        )
+        |> Decode.andThen
+            (\val ->
+                case Date.fromString val of
+                    Err err ->
+                        Decode.fail err
+
+                    Ok date ->
+                        Decode.succeed date
+            )
+
 
 articleDecoder : Decode.Decoder Article
 articleDecoder =

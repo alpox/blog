@@ -57,11 +57,13 @@ mapCmd : (a -> msg) -> ( model, Cmd a, outMsg ) -> ( model, Cmd msg, outMsg )
 mapCmd mapType ( model, cmd, outMsg ) =
     ( model, Cmd.map mapType cmd, outMsg )
 
+
 mapMainCmd :
     ( model, Cmd msg, Cmd msg )
-    -> (model, Cmd msg)
-mapMainCmd (model, cmd, outCmd) =
-    (model, Cmd.batch [ cmd, outCmd ])
+    -> ( model, Cmd msg )
+mapMainCmd ( model, cmd, outCmd ) =
+    ( model, Cmd.batch [ cmd, outCmd ] )
+
 
 evaluateMaybe :
     (outMsg -> model -> ( model, Cmd msg ))
@@ -80,9 +82,11 @@ evaluateMaybe interpretOutMsg defaultCmd ( model, cmd, outMsg ) =
     in
         ( newModel, Cmd.batch [ cmd, newCmd ] )
 
+
 sendMessage : (a -> msg) -> a -> Cmd msg
 sendMessage msg input =
     Task.perform msg <| Task.succeed input
+
 
 sendSingleMessage : msg -> Cmd msg
 sendSingleMessage msg =

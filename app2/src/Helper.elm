@@ -44,4 +44,3 @@ showWarn =
 showError : String -> Cmd Msg
 showError =
     Error >> showFlashCommand
-    

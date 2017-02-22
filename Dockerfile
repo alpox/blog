@@ -1,43 +1,18 @@
-# Pull base image.
-FROM alpox/docker_node_elixir
+FROM bitwalker/alpine-elixir-phoenix:latest
 
-RUN locale-gen en_US.UTF-8  
-ENV LANG en_US.UTF-8  
-ENV LANGUAGE en_US:en  
-ENV LC_ALL en_US.UTF-8
+# Set exposed ports
+EXPOSE 80
+ENV PORT=4000 MIX_ENV=dev
 
-# Add files.
-# ADD root/.bashrc /root/.bashrc
-ADD app2 /var/www/blog/app
-ADD mix.exs /var/www/blog/mix.exs
-ADD priv /var/www/blog/priv
-ADD lib /var/www/blog/lib
-ADD config /var/www/blog/config
-ADD web /var/www/blog/web
+# Cache elixir deps
+ADD mix.exs mix.lock ./
+ADD config config
+RUN mix do deps.get, deps.compile
 
-# Install.
-RUN \
-  cd /var/www/blog/app && \
-  npm install --yes && \
-  npm install -g elm --yes && \
-  npm install -g elm-css --yes && \
-  elm package install --yes && \
-  gulp build && \
-  npm uninstall --yes && \
-  npm uninstall -g gulp-cli --yes && \
-  npm uninstall -g gulp --yes && \
-  npm uninstall -g elm --yes && \
-  npm uninstall -g elm-css --yes && \
-  apt-get remove nodejs -y && \
-  apt-get autoremove -y && \
-  cd /var/www/blog && \
-  mix local.hex --force && \
-  mix local.rebar --force && \
-  mix deps.get && \
-  mix compile && \
-  rm -rf /var/www/blog/app
+ADD . .
 
-WORKDIR /var/www/blog
+# Run frontend build, compile, and digest assets
+RUN  mix do compile, phoenix.digest
+RUN  chmod +x ./entrypoint.sh
 
-# Define default command.
-CMD ["mix", "phoenix.server"]
+CMD ["/bin/sh", "./entrypoint.sh"]
