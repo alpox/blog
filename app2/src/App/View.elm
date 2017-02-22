@@ -184,7 +184,8 @@ sideBar =
 view : Model -> Html Msg
 view model =
     div []
-        [ (flip htmlIfEditRoute) (navigationBar model) (text "") model
+        [ text "blabla"
+        , (flip htmlIfEditRoute) (navigationBar model) (text "") model
         , loginModal model
         , div [ class [ SharedStyle.FlashContainer ] ] <|
             List.map flash model.flashes
