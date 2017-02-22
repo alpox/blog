@@ -21144,45 +21144,57 @@ var _user$project$App_View$view = function (model) {
 		{ctor: '[]'},
 		{
 			ctor: '::',
-			_0: _elm_lang$html$Html$text('blabla'),
+			_0: A4(
+				_elm_lang$core$Basics$flip,
+				_user$project$App_View$htmlIfEditRoute,
+				_user$project$App_View$navigationBar(model),
+				_elm_lang$html$Html$text(''),
+				model),
 			_1: {
 				ctor: '::',
-				_0: A4(
-					_elm_lang$core$Basics$flip,
-					_user$project$App_View$htmlIfEditRoute,
-					_user$project$App_View$navigationBar(model),
-					_elm_lang$html$Html$text(''),
-					model),
+				_0: _user$project$App_View$loginModal(model),
 				_1: {
 					ctor: '::',
-					_0: _user$project$App_View$loginModal(model),
+					_0: A2(
+						_elm_lang$html$Html$div,
+						{
+							ctor: '::',
+							_0: _user$project$App_View$class(
+								{
+									ctor: '::',
+									_0: _user$project$Shared_Style$FlashContainer,
+									_1: {ctor: '[]'}
+								}),
+							_1: {ctor: '[]'}
+						},
+						A2(_elm_lang$core$List$map, _user$project$App_View$flash, model.flashes)),
 					_1: {
 						ctor: '::',
-						_0: A2(
-							_elm_lang$html$Html$div,
-							{
-								ctor: '::',
-								_0: _user$project$App_View$class(
-									{
-										ctor: '::',
-										_0: _user$project$Shared_Style$FlashContainer,
-										_1: {ctor: '[]'}
-									}),
-								_1: {ctor: '[]'}
-							},
-							A2(_elm_lang$core$List$map, _user$project$App_View$flash, model.flashes)),
-						_1: {
-							ctor: '::',
-							_0: A3(
-								_user$project$App_View$htmlIfEditRoute,
-								A2(
-									_elm_lang$html$Html$map,
-									_user$project$App_Types$EditMsg,
-									A2(_user$project$Edit_View$view, model.context, model.editModel)),
-								A2(
-									_elm_lang$html$Html$div,
-									{ctor: '[]'},
-									{
+						_0: A3(
+							_user$project$App_View$htmlIfEditRoute,
+							A2(
+								_elm_lang$html$Html$map,
+								_user$project$App_Types$EditMsg,
+								A2(_user$project$Edit_View$view, model.context, model.editModel)),
+							A2(
+								_elm_lang$html$Html$div,
+								{ctor: '[]'},
+								{
+									ctor: '::',
+									_0: A2(
+										_elm_lang$html$Html$div,
+										{
+											ctor: '::',
+											_0: _user$project$App_View$class(
+												{
+													ctor: '::',
+													_0: _user$project$App_Style$Slider,
+													_1: {ctor: '[]'}
+												}),
+											_1: {ctor: '[]'}
+										},
+										{ctor: '[]'}),
+									_1: {
 										ctor: '::',
 										_0: A2(
 											_elm_lang$html$Html$div,
@@ -21191,57 +21203,41 @@ var _user$project$App_View$view = function (model) {
 												_0: _user$project$App_View$class(
 													{
 														ctor: '::',
-														_0: _user$project$App_Style$Slider,
+														_0: _user$project$App_Style$PageAnchor,
 														_1: {ctor: '[]'}
 													}),
 												_1: {ctor: '[]'}
 											},
-											{ctor: '[]'}),
-										_1: {
-											ctor: '::',
-											_0: A2(
-												_elm_lang$html$Html$div,
-												{
-													ctor: '::',
-													_0: _user$project$App_View$class(
-														{
-															ctor: '::',
-															_0: _user$project$App_Style$PageAnchor,
-															_1: {ctor: '[]'}
-														}),
-													_1: {ctor: '[]'}
-												},
-												{
-													ctor: '::',
-													_0: A2(
-														_elm_lang$html$Html$div,
-														{
-															ctor: '::',
-															_0: _user$project$App_View$class(
-																{
-																	ctor: '::',
-																	_0: _user$project$App_Style$PageFrame,
-																	_1: {ctor: '[]'}
-																}),
-															_1: {ctor: '[]'}
-														},
-														{
-															ctor: '::',
-															_0: _user$project$App_View$page(model),
-															_1: {ctor: '[]'}
-														}),
-													_1: {
+											{
+												ctor: '::',
+												_0: A2(
+													_elm_lang$html$Html$div,
+													{
 														ctor: '::',
-														_0: _user$project$App_View$sideBar,
+														_0: _user$project$App_View$class(
+															{
+																ctor: '::',
+																_0: _user$project$App_Style$PageFrame,
+																_1: {ctor: '[]'}
+															}),
 														_1: {ctor: '[]'}
-													}
-												}),
-											_1: {ctor: '[]'}
-										}
-									}),
-								model),
-							_1: {ctor: '[]'}
-						}
+													},
+													{
+														ctor: '::',
+														_0: _user$project$App_View$page(model),
+														_1: {ctor: '[]'}
+													}),
+												_1: {
+													ctor: '::',
+													_0: _user$project$App_View$sideBar,
+													_1: {ctor: '[]'}
+												}
+											}),
+										_1: {ctor: '[]'}
+									}
+								}),
+							model),
+						_1: {ctor: '[]'}
 					}
 				}
 			}
