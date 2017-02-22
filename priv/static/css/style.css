@@ -1,0 +1,528 @@
+* {
+    box-sizing: border-box;
+    outline: none;
+}
+
+html, body {
+    margin: 0px;
+    padding: 0px;
+    min-height: 100%;
+    height: 100%;
+    font-family: Droid Sans, sans-serif;
+    background-image: url(/img/fresh_snow.png);
+    color: rgb(100, 100, 100);
+}
+
+h1, h2, h3, h4 {
+    color: rgb(60, 60, 60);
+    margin: 0px;
+    margin-bottom: 8px;
+}
+
+ul {
+    margin: 0px;
+    padding: 0px;
+}
+
+ul > li {
+    list-style-type: none;
+}
+
+.markdown-body ul > li {
+    list-style-type: initial;
+}
+
+a {
+    color: initial;
+    text-decoration: none;
+}
+
+a:hover {
+    color: initial;
+    text-decoration: none;
+}
+
+a:focus {
+    color: initial;
+    text-decoration: none;
+}
+
+a:active {
+    color: initial;
+    text-decoration: none;
+}
+
+.bbsPageFrame {
+    background-color: #FFF;
+    padding: 16px 24px;
+    width: 60%;
+    min-height: calc(100vh - 400px);
+    top: 350px;
+    box-sizing: border-box;
+    overflow: hidden;
+    box-shadow: 0px 0px 10px #AAAAAA;
+}
+
+.bbsPageFrame  h1:first-child {
+    margin-top: 16px;
+    margin-bottom: 32px;
+    border-left: 2px solid #004d40;
+    padding-left: 24px;
+}
+
+.bbsPageAnchor {
+    display: flex;
+}
+
+.bbsDashboardArticle {
+    position: relative;
+    padding: 16px 24px;
+    padding-left: 8px;
+    margin-left: -8px;
+    margin-top: 16px;
+}
+
+.bbsDashboardArticle > h3 {
+    color: #004d40;
+}
+
+.bbsDashboardArticle > .bbsSummary {
+    padding: 16px 0px;
+}
+
+.bbsDashboardArticle > .bbsTagLine {
+    display: flex;
+    justify-content: space-between;
+    height: 36px;
+    line-height: 36px;
+    font-size: 0.8em;
+    border-top: 1px solid #DDD;
+    border-bottom: 1px solid #DDD;
+}
+
+.bbsDashboardArticle > .bbsTagLine > span:last-child {
+    cursor: pointer;
+    color: #004d40;
+}
+
+.bbsCloseModal {
+    width: 32px;
+    height: 32px;
+    position: absolute;
+    right: 16px;
+    top: 16px;
+    border-radius: 100%;
+    background-color: #DDD;
+    border: 1px solid #AAAAAA;
+    cursor: pointer;
+}
+
+.bbsCloseModal:hover {
+    background-color: #CCC;
+}
+
+.bbsNavBar {
+    display: flex;
+    justify-content: space-between;
+    height: 50px;
+    background-color: #FFF;
+    border-bottom: 1px solid #004d40;
+}
+
+.bbsNavBar > .bbsButtonList {
+    display: flex;
+}
+
+.bbsNavBar > .bbsButtonList:first-child > button {
+    border: 0px;
+    border-right: 1px dashed #004d40;
+}
+
+.bbsNavBar > .bbsButtonList:first-child > button:hover {
+    border-right: 1px solid #004d40;
+}
+
+.bbsNavBar > .bbsButtonList > button {
+    padding: 0px 16px;
+    border: 0px;
+    background-color: transparent;
+    cursor: pointer;
+    border-left: 1px dashed #004d40;
+    font-size: 1.3em;
+    color: #004d40;
+}
+
+.bbsNavBar > .bbsButtonList > button:hover {
+    border-left: 1px solid #004d40;
+    background-color: #FDFDFD;
+    cursor: pointer;
+    user-select: none;
+}
+
+.bbsSlider {
+    width: 100%;
+    height: 350px;
+    border-bottom: 1px solid #111111;
+    background-image: url(/img/background_rope.jpeg);
+    background-size: cover;
+    background-position: 50% 60%;
+    z-index: 1000;
+}
+
+.bbsLoginModal {
+    display: flex;
+    width: 500px;
+    height: 300px;
+    padding: 32px;
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    box-shadow: 2px 2px 50px #AAAAAA;
+    background-color: #FFF;
+    border-radius: 4px;
+    border: 2px solid #AAAAAA;
+    z-index: 1000;
+}
+
+.bbsLoginForm {
+    display: flex;
+    flex-flow: column;
+    margin: auto;
+    width: 300px;
+}
+
+.bbsLoginForm > h2 {
+    margin-bottom: 24px;
+    border-left: 1px solid #004d40;
+    padding-left: 16px;
+}
+
+.bbsFormElement {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 16px;
+}
+
+.bbsFormElement > span {
+    font-size: 1.1em;
+    margin: auto 0px;
+}
+
+.bbsFormElement > input {
+    border: 1px solid #004d40;
+    padding: 4px 8px;
+    font-size: 12pt;
+}
+
+.bbsButtonLogin {
+    flex-shrink: 3;
+    padding: 4px 8px;
+    font-size: 1.1em;
+    background-color: #FFF;
+    border: 1px dashed #004d40;
+}
+
+.bbsButtonLogin:hover {
+    border: 1px solid #004d40;
+    background-color: #FDFDFD;
+    cursor: pointer;
+    user-select: none;
+}
+
+.bbsHidden {
+    display: none;
+}
+
+.bbsFloatingSideBar {
+    flex-grow: 1;
+}
+
+.bbsFloatingSideBar > div {
+    position: relative;
+    background-color: #FFF;
+    margin: 32px 64px;
+    padding: 16px;
+    text-align: center;
+    box-shadow: 0px 0px 10px #AAAAAA;
+    border-radius: 4px;
+}
+
+.bbsFloatingSideBar > div > img {
+    position: absolute;
+    width: 192px;
+    height: 192px;
+    left: 50%;
+    top: 20px;
+    padding: 16px;
+    background-color: #FFF;
+    border-radius: 100%;
+    transform: translateX(-50%);
+}
+
+.bbsFloatingSideBar > div > .bbsSideBarSection {
+    padding-top: 100px;
+    margin-top: 100px;
+    border-top: 3px solid #004d40;
+}
+
+.bbsFloatingSideBar > div > .bbsSideBarSection > .bbsSocialIcons {
+    display: flex;
+    justify-content: center;
+}
+
+.bbsFloatingSideBar > div > .bbsSideBarSection > .bbsSocialIcons  a {
+    margin-left: 16px;
+    margin-top: 8px;
+    cursor: pointer;
+}
+
+.bbsFloatingSideBar > div > .bbsSideBarSection > .bbsSocialIcons  img {
+    width: 42px;
+}
+
+.bbsFlash {
+    padding: 8px 16px;
+    border-radius: 4px;
+    box-shadow: 1px 1px 10px #AAAAAA;
+    margin-top: 8px;
+    width: 250px;
+}
+
+.bbsFlashContainer {
+    position: fixed;
+    top: 16px;
+    right: 16px;
+    z-index: 1000;
+}
+
+.bbsFlashAnimationBase {
+    opacity: 1;
+}
+
+.bbsFlashAnimationAnimating {
+    transition: opacity 1s linear;
+}
+
+.bbsFlashAnimationDone {
+    opacity: 0;
+}
+
+.bbsFlashInfo {
+    background-color: #81C784;
+}
+
+.bbsFlashWarn {
+    background-color: #ffB74D;
+}
+
+.bbsFlashError {
+    background-color: #E57373;
+}
+
+.bbsEditEdit {
+    display: flex;
+    flex-flow: column;
+    height: 100vh;
+    background-color: #FFF;
+}
+
+.bbsEditEditNav {
+    display: flex;
+    justify-content: space-between;
+    height: 50px;
+    width: 100%;
+    background-color: #FFF;
+    border-bottom: 1px solid #01579b;
+    z-index: 100;
+}
+
+.bbsEditEditButtons > button {
+    width: 40px;
+    height: 40px;
+    line-height: 0px;
+    padding: 0px;
+    border: 1px solid #111111;
+    border-radius: 100%;
+    font-size: 1.2em;
+    margin-bottom: 8px;
+    cursor: pointer;
+}
+
+.bbsEditEditButtons > button:first-child {
+    margin-right: 16px;
+}
+
+.bbsEditEditButtons > .bbsEditButtonGreen {
+    background-color: rgba(76, 175, 80, 0.5);
+}
+
+.bbsEditEditButtons > .bbsEditButtonGreen:hover {
+    background-color: rgb(76, 175, 80);
+}
+
+.bbsEditEditButtons > .bbsEditButtonRed {
+    background-color: rgba(239, 83, 80, 0.5);
+}
+
+.bbsEditEditButtons > .bbsEditButtonRed:hover {
+    background-color: rgb(239, 83, 80);
+}
+
+.bbsEditModifyButtons {
+    display: flex;
+    justify-content: center;
+}
+
+.bbsEditEditContainer {
+    display: flex;
+    flex-flow: row;
+    flex-grow: 1;
+}
+
+.bbsEditSideBar {
+    display: flex;
+    flex-flow: column;
+    justify-content: space-between;
+    width: 20%;
+    box-shadow: 0px 0px 10px #aaa;
+}
+
+.bbsEditSideBar  li {
+    display: block;
+    padding: 16px 16px;
+    font-size: 1.1em;
+    font-weight: bold;
+    cursor: pointer;
+    border-bottom: 1px solid #DDD;
+    user-select: none;
+}
+
+.bbsEditSideBar  li:hover {
+    background-color: #DDD;
+}
+
+.bbsEditArticleEdit {
+    display: flex;
+    flex-flow: column;
+    width: 40%;
+    border-left: 1px solid #01579b;
+    border-right: 1px solid #01579b;
+}
+
+.bbsEditArticleTitleEdit {
+    height: 50px;
+    font-size: 1.3em;
+    padding: 0px 16px;
+    border: 0px;
+}
+
+.bbsEditArticleSummaryEdit {
+    flex-grow: 1;
+    padding: 16px;
+    resize: none;
+    border: 0px;
+}
+
+.bbsEditArticleContentEdit {
+    padding: 16px;
+    flex-grow: 4;
+    resize: none;
+    border: 0px;
+}
+
+.bbsEditArticlePreview {
+    width: 40%;
+    padding: 24px;
+}
+
+.bbsEditSeparator {
+    width: 90%;
+    margin: auto;
+    border-bottom: 1px solid #01579b;
+}
+
+.bbsEditButtonList {
+    display: flex;
+    height: 100%;
+}
+
+.bbsEditButtonList:first-child > button {
+    border: 0px;
+    border-right: 1px dashed #4fc3f7;
+}
+
+.bbsEditButtonList:first-child > button:hover {
+    border-right: 1px solid #4fc3f7;
+}
+
+.bbsEditButtonList > button {
+    padding-right: 8px;
+    padding-left: 8px;
+    background-color: #FFF;
+    border-radius: 0px;
+    border: 0px;
+    border-left: 1px dashed #4fc3f7;
+    color: #03a9f4;
+    font-size: 1.3em;
+}
+
+.bbsEditButtonList > button:hover {
+    border-left: 1px solid #4fc3f7;
+    background-color: #FDFDFD;
+    cursor: pointer;
+    user-select: none;
+}
+
+.bbsEditActive {
+    background-color: #DDD;
+}
+
+.bbsEditDeleteModal {
+    display: flex;
+    align-items: center;
+    padding: 32px;
+    padding-left: 64px;
+    position: absolute;
+    width: 800px;
+    height: 300px;
+    z-index: 1000;
+    box-shadow: 2px 2px 50px #AAAAAA;
+    border-radius: 4px;
+    border: 2px solid #AAAAAA;
+    background-color: #FFF;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+}
+
+.bbsEditDeleteModal  .bbsEditEditButtons {
+    margin-top: 16px;
+}
+
+.bbsEditDeleteModal > i {
+    font-size: 5em;
+    color: #FF4136;
+    text-align: center;
+    margin-right: 64px;
+}
+
+.bbsEditHidden {
+    display: none;
+}
+
+.bbsEditRight {
+    justify-content: space-between;
+}
+
+.bbsEditNotSaved {
+    background-color: rgba(191, 54, 12, 0.3);
+}
+
+.bbsEditNotSaved.bbsEditActive {
+    background-color: rgba(166, 29, 0, 0.2);
+}
+
+.bbsEditNotSaved:hover {
+    background-color: rgba(166, 29, 0, 0.3) !important;
+}
